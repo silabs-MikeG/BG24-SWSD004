@@ -1,0 +1,44 @@
+# Silicon Labs Project Configuration Tools: slcp, v0, Component selection file.
+project_name: BG24-SWD004
+label: BG24-SWD004
+description: |
+  This example project shows an empty configuration that can be used as a starting point to add components and functionality.
+category: Example|Platform
+filter:
+- name: Device Type
+  value: [SoC]
+- name: MCU
+  value: [32-bit MCU]
+- name: Project Difficulty
+  value: [Beginner]
+package: platform
+quality: production
+source:
+- {path: app.c}
+- {path: main.c}
+include:
+- path: ''
+  file_list:
+  - {path: app.h}
+sdk: {id: gecko_sdk, version: 4.3.0}
+toolchain_settings: []
+component:
+- {id: emlib_i2c}
+- {id: power_manager}
+- {id: emlib_iadc}
+- {id: sl_system}
+- {id: nvm3_default_config}
+- {id: nvm3_lib}
+- {id: spidrv_core}
+- {id: brd4187c}
+- {id: device_init}
+- {id: brd4002a}
+- {id: EFR32MG24B220F1536IM48}
+- {id: psa_crypto}
+- {id: uartdrv_core}
+- {id: sleeptimer}
+- {id: nvm3_default}
+define:
+- {name: DEBUG_EFM}
+ui_hints: {}
+
