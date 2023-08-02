@@ -37,6 +37,8 @@
 								<option id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.optimization.level.864747406" name="Optimization Level" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.optimization.level" value="gnu.c.optimization.level.size" valueType="enumerated"/>
 								<option IS_BUILTIN_EMPTY="false" IS_VALUE_EMPTY="false" id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.def.symbols.1133531370" name="Defined symbols (-D)" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.def.symbols" useByScannerDiscovery="false" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="DEBUG=1"/>
+									<listOptionValue builtIn="false" value="USER_DEFINED_JOIN_PARAMETERS=1"/>
+									<listOptionValue builtIn="false" value="ADD_SMTC_FILE_UPLOAD=1"/>
 									<listOptionValue builtIn="false" value="SMTC_MULTICAST=1"/>
 									<listOptionValue builtIn="false" value="LR11XX_TRANSCEIVER=1"/>
 									<listOptionValue builtIn="false" value="LR11XX=1"/>
