@@ -36,14 +36,16 @@
  * -----------------------------------------------------------------------------
  * --- DEPENDENCIES ------------------------------------------------------------
  */
-
+//#define DEBUG_HAL_TIMER_LIST
 #include <stdint.h>   // C99 types
 #include <stdbool.h>  // bool type
 
 #include "smtc_hal_mcu.h"
 #include "smtc_hal_tmr_list.h"
 #include "smtc_hal_rtc.h"
-
+#ifdef DEBUG_HAL_TIMER_LIST
+#include "smtc_modem_hal_dbg_trace.h"
+#endif
 /*
  * -----------------------------------------------------------------------------
  * --- PRIVATE MACROS-----------------------------------------------------------
@@ -161,7 +163,9 @@ void timer_start( timer_event_t* obj )
     obj->timestamp        = obj->reload_value;
     obj->is_started       = true;
     obj->is_next_2_expire = false;
-
+#ifdef DEBUG_HAL_TIMER_LIST
+    SMTC_MODEM_HAL_TRACE_WARNING( "timer_start %d timestamp\n", obj->timestamp );
+#endif
     if( timer_list_head == NULL )
     {
         hal_rtc_set_time_ref_in_ticks( );
@@ -201,7 +205,9 @@ static void timer_insert_timer( timer_event_t* obj )
 {
     timer_event_t* cur  = timer_list_head;
     timer_event_t* next = timer_list_head->next;
-
+#ifdef DEBUG_HAL_TIMER_LIST
+    SMTC_MODEM_HAL_TRACE_WARNING( "timer_insert_timer\n");
+#endif
     while( cur->next != NULL )
     {
         if( obj->timestamp > next->timestamp )
@@ -244,7 +250,9 @@ void timer_irq_handler( void )
     uint32_t old           = hal_rtc_get_time_ref_in_ticks( );
     uint32_t now           = hal_rtc_set_time_ref_in_ticks( );
     uint32_t delta_context = now - old;  // intentional wrap around
-
+#ifdef DEBUG_HAL_TIMER_LIST
+    SMTC_MODEM_HAL_TRACE_WARNING( "timer_irq\n");
+#endif
     /* Update timeStamp based upon new Time Reference
        because delta context should never exceed 2^32 */
     if( timer_list_head != NULL )
@@ -294,7 +302,9 @@ void timer_stop( timer_event_t* obj )
 
     timer_event_t* prev = timer_list_head;
     timer_event_t* cur  = timer_list_head;
-
+#ifdef DEBUG_HAL_TIMER_LIST
+    SMTC_MODEM_HAL_TRACE_WARNING( "timer_stop\n");
+#endif
     /* List is empty or the obj to stop does not exist */
     if( ( timer_list_head == NULL ) || ( obj == NULL ) )
     {
@@ -416,7 +426,9 @@ static void timer_set_timeout( timer_event_t* obj )
 {
     int32_t min_ticks     = hal_rtc_get_minimum_timeout( );
     obj->is_next_2_expire = true;
-
+#ifdef DEBUG_HAL_TIMER_LIST
+    SMTC_MODEM_HAL_TRACE_WARNING( "timer_set_timeout %d timestamp\n", obj->timestamp );
+#endif
     /* In case deadline too soon */
     if( obj->timestamp < ( hal_rtc_get_timer_elapsed_value( ) + min_ticks ) )
     {

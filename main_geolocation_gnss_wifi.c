@@ -304,14 +304,15 @@ int geolocation_init( void )
     }
     HAL_DBG_TRACE_INFO( "LR11XX FW   : 0x%04X\n", lr11xx_fw_version.fw );
 
-
+    HAL_DBG_TRACE_INFO( "Geolocation init Complete\n" );
+    return 0;
 }
 
 uint32_t geolocation_process( void )
 {
      /* Execute modem runtime, this function must be called again in sleep_time_ms milliseconds or sooner. */
          uint32_t sleep_time_ms = smtc_modem_run_engine( );
-
+//         HAL_DBG_TRACE_INFO( "geolocation process, sleep for %s ms\n", sleep_time_ms );
          /* go in low power */
 //         hal_mcu_set_sleep_for_ms( sleep_time_ms );
          return sleep_time_ms;

@@ -514,7 +514,7 @@ static void hal_mcu_gpio_init( void )
     hal_gpio_init_out( SMTC_RADIO_NSS, 1 );
     hal_gpio_init_in( SMTC_RADIO_BUSY, HAL_GPIO_PULL_MODE_NONE, HAL_GPIO_IRQ_MODE_OFF, NULL );
     // Here init only the pin as an exti rising and the callback will be attached later
-    hal_gpio_init_in( SMTC_RADIO_DIOX, HAL_GPIO_PULL_MODE_DOWN, HAL_GPIO_IRQ_MODE_RISING, NULL );
+    hal_gpio_init_in( SMTC_RADIO_DIOX, HAL_GPIO_PULL_MODE_UP, HAL_GPIO_IRQ_MODE_RISING, NULL );
     hal_gpio_init_out( SMTC_RADIO_NRST, 1 );
 
     hal_gpio_init_out( SMTC_LED_RX, 0 );

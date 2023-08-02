@@ -36,16 +36,20 @@
  * -----------------------------------------------------------------------------
  * --- DEPENDENCIES ------------------------------------------------------------
  */
+//#define DEBUG_HAL_RTC
 
 #include <time.h>
 #include <math.h>
+
 
 #include "smtc_hal.h"
 #include "smtc_hal_rtc_ex.h"
 #include "sl_sleeptimer.h"
 #include "em_burtc.h"
 #include "em_cmu.h"
-
+#ifdef DEBUG_HAL_RTC
+#include "smtc_modem_hal_dbg_trace.h"
+#endif
 sl_sleeptimer_timer_handle_t handleRtcTimer;
 sl_sleeptimer_timer_handle_t handleRtcWakeupTimer;
 /*
@@ -191,16 +195,21 @@ void hal_rtc_init( void )
   date.hour = 0;
 
   sl_sleeptimer_set_datetime (&date);
-
-
+#ifdef DEBUG_HAL_RTC
+  SMTC_MODEM_HAL_TRACE_WARNING( "rtc Init\n");
+#endif
   //    hal_rtc_set_time_ref_in_ticks( );
 }
 
 uint32_t hal_rtc_get_time_s( void )
 {
-  uint16_t milliseconds_div_10 = 0;
+  uint16_t milliseconds_div_10 = 0, seconds;
 
-  return hal_rtc_get_calendar_time( &milliseconds_div_10 );
+  seconds=hal_rtc_get_calendar_time( &milliseconds_div_10 );
+#ifdef DEBUG_HAL_RTC
+  SMTC_MODEM_HAL_TRACE_WARNING( "hal_rtc_get_time_s, %d\n", seconds);
+#endif
+  return seconds;
 }
 
 uint32_t hal_rtc_get_time_100us( void )
@@ -209,7 +218,9 @@ uint32_t hal_rtc_get_time_100us( void )
   uint16_t milliseconds_div_10 = 0;
 
   seconds = hal_rtc_get_calendar_time( &milliseconds_div_10 );
-
+#ifdef DEBUG_HAL_RTC
+  SMTC_MODEM_HAL_TRACE_WARNING( "hal_rtc_get_time_100us, %d\n", (seconds * 10000 + milliseconds_div_10));
+#endif
   return seconds * 10000 + milliseconds_div_10;
 }
 
@@ -219,13 +230,18 @@ uint32_t hal_rtc_get_time_ms( void )
   uint16_t milliseconds_div_10 = 0;
 
   seconds = hal_rtc_get_calendar_time( &milliseconds_div_10 );
-
+#ifdef DEBUG_HAL_RTC
+  SMTC_MODEM_HAL_TRACE_WARNING( "hal_rtc_get_time_ms, %d\n", (seconds * 1000 + ( milliseconds_div_10 / 10 )));
+#endif
   return seconds * 1000 + ( milliseconds_div_10 / 10 );
 }
 
 void hal_rtc_stop_alarm( void )
 {
   /* Disable the Alarm A interrupt */
+#ifdef DEBUG_HAL_RTC
+  SMTC_MODEM_HAL_TRACE_WARNING( "hal_rtc_stop_alarm\n");
+#endif
   sl_sleeptimer_stop_timer(&handleRtcTimer);
 }
 
@@ -238,7 +254,9 @@ void hal_rtc_stop_alarm( void )
  */
 void hal_rtc_start_alarm( uint32_t timeout )
 {
-
+#ifdef DEBUG_HAL_RTC
+  SMTC_MODEM_HAL_TRACE_WARNING( "hal_rtc_start_alarm, timeout %d\n", timeout);
+#endif
   sl_sleeptimer_start_timer(&handleRtcTimer, timeout, rtcAlarmCallback, NULL, 0, 0);
 //  uint16_t        rtc_alarm_sub_seconds = 0;
 //  uint16_t        rtc_alarm_seconds     = 0;
@@ -352,12 +370,17 @@ uint32_t hal_rtc_get_timer_value( void )
 uint32_t hal_rtc_get_timer_elapsed_value( void )
 {
   uint32_t timestamp_value = ( uint32_t ) sl_sleeptimer_get_tick_count64( );
-
+#ifdef DEBUG_HAL_RTC
+  SMTC_MODEM_HAL_TRACE_WARNING( "hal_rtc_get_timer_elapsed_value\n");
+#endif
   return ( ( uint32_t )( timestamp_value - hal_rtc.context.time_ref_in_ticks ) );
 }
 
 void hal_rtc_delay_in_ms( const uint32_t milliseconds )
 {
+#ifdef DEBUG_HAL_RTC
+  SMTC_MODEM_HAL_TRACE_WARNING( "hal_rtc_delay_in_ms\n");
+#endif
   sl_sleeptimer_delay_millisecond(milliseconds);
 }
 
@@ -369,7 +392,9 @@ void hal_rtc_wakeup_timer_set_ms( const int32_t milliseconds )
 //  /* reset irq status */
 //  wut_timer_irq_happened = false;
 //  HAL_RTCEx_SetWakeUpTimer_IT( &hal_rtc.handle, delay_ms_2_tick, RTC_WAKEUPCLOCK_RTCCLK_DIV16 );
-
+#ifdef DEBUG_HAL_RTC
+  SMTC_MODEM_HAL_TRACE_WARNING( "hal_rtc_wakeup_timer_set_ms, delay %d ms\n",milliseconds);
+#endif
   sl_sleeptimer_start_timer(&handleRtcWakeupTimer, delay_ms_2_tick, wakeUpTimerCallback, NULL, 0, 0);
 }
 
@@ -511,6 +536,9 @@ void rtcAlarmCallback(sl_sleeptimer_timer_handle_t *handle, void *data) { timer_
 void wakeUpTimerCallback(sl_sleeptimer_timer_handle_t *handle, void *data)
 {
 //  HAL_RTCEx_WakeUpTimerIRQHandler( &hal_rtc.handle );
+#ifdef DEBUG_HAL_RTC
+  SMTC_MODEM_HAL_TRACE_WARNING( "wakeUpTimerCallback rtc\n");
+#endif
   wut_timer_irq_happened = true;
 }
 

@@ -36,14 +36,16 @@
  * -----------------------------------------------------------------------------
  * --- DEPENDENCIES ------------------------------------------------------------
  */
-
+//#define DEBUG_HAL_LP_TIMER
 #include <stdint.h>   // C99 types
 #include <stdbool.h>  // bool type
 
 #include "smtc_hal_lp_timer.h"
 #include "sl_sleeptimer.h"
 #include "smtc_hal_mcu.h"
-
+#ifdef DEBUG_HAL_LP_TIMER
+#include "smtc_modem_hal_dbg_trace.h"
+#endif
 /*
  * -----------------------------------------------------------------------------
  * --- PRIVATE MACROS-----------------------------------------------------------
@@ -116,6 +118,9 @@ void hal_lp_timer_start( const uint32_t milliseconds, const hal_lp_timer_irq_t* 
 
 
     lptim_tmr_irq = *tmr_irq;
+#ifdef DEBUG_HAL_LP_TIMER
+    SMTC_MODEM_HAL_TRACE_WARNING( "hal_lp_timer_start %d milliseconds\n", milliseconds );
+#endif
 
     sl_sleeptimer_start_timer (&handleLpLoraTimer, delay_ms_2_tick, lpTimerCallback, (void*)0,  0, 0 );
 
@@ -131,7 +136,9 @@ void lpTimerCallback(sl_sleeptimer_timer_handle_t *handle, void *data)
 {
 
     sl_sleeptimer_stop_timer (&handleLpLoraTimer);
-
+#ifdef DEBUG_HAL_LP_TIMER
+    SMTC_MODEM_HAL_TRACE_WARNING( "lpTimerCallback\n" );
+#endif
     if( lptim_tmr_irq.callback != NULL )
     {
         lptim_tmr_irq.callback( lptim_tmr_irq.context );

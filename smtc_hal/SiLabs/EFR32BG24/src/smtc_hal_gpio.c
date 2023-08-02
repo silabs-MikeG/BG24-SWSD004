@@ -36,13 +36,18 @@
  * -----------------------------------------------------------------------------
  * --- DEPENDENCIES ------------------------------------------------------------
  */
+
+//#define DEBUG_HAL_GPIO
 #include <stdint.h>   // C99 types
 #include <stdbool.h>  // bool type
 
 #include "smtc_hal.h"
 #include "em_gpio.h"
 #include "smtc_hal_gpio.h"
-
+#include "gpiointerrupt.h"
+#ifdef DEBUG_HAL_GPIO
+#include "smtc_modem_hal_dbg_trace.h"
+#endif
 
 /*
  * -----------------------------------------------------------------------------
@@ -88,7 +93,7 @@ static hal_gpio_irq_t const* gpio_irq[16];
  * -----------------------------------------------------------------------------
  * --- PRIVATE FUNCTIONS DECLARATION -------------------------------------------
  */
-void HAL_GPIO_EXTI_Callback( uint16_t gpio_pin );
+void HAL_GPIO_EXTI_Callback( uint8_t gpio_pin );
 /*!
  * Generic gpio initialization
  *
@@ -177,50 +182,61 @@ void hal_gpio_init_in( const hal_gpio_pin_names_t pin, const hal_gpio_pull_mode_
   gpio.mode = (pull_mode == HAL_GPIO_PULL_MODE_NONE) ? gpioModeInput : gpioModeInputPull;
 
   gpio.pull = (pull_mode == HAL_GPIO_PULL_MODE_DOWN) ?  0 : 1;
-
+  GPIO_PinModeSet(gpio.port, gpio.pin_num, gpio.mode, gpio.pull);
   if( irq != NULL )
     {
+#ifdef DEBUG_HAL_GPIO
+//      SMTC_MODEM_HAL_TRACE_WARNING( "GPIO IRQ init, ping 0x%x\n", pin);
+#endif
       irq->pin = pin;
+      hal_gpio_irq_attach(irq);
     }
-  GPIO_PinModeSet(gpio.port, gpio.pin_num, gpio.mode, gpio.pull);
 
-  switch(irq_mode){
-    case HAL_GPIO_IRQ_MODE_OFF:
-      gpio.irq_risingEdge = false;
-      gpio.irq_fallingEdge = false;
-      gpio.irq_en = false;
-      break;
-    case HAL_GPIO_IRQ_MODE_RISING:
-      gpio.irq_risingEdge = true;
-      gpio.irq_fallingEdge = false;
-      gpio.irq_en = true;
-      break;
-    case HAL_GPIO_IRQ_MODE_FALLING:
-      gpio.irq_risingEdge = false;
-      gpio.irq_fallingEdge = true;
-      gpio.irq_en = true;
-      break;
-    case HAL_GPIO_IRQ_MODE_RISING_FALLING:
-      gpio.irq_risingEdge = true;
-      gpio.irq_fallingEdge = true;
-      gpio.irq_en = true;
-      break;
+  if(irq_mode != HAL_GPIO_IRQ_MODE_OFF){
+#ifdef DEBUG_HAL_GPIO
+//      SMTC_MODEM_HAL_TRACE_WARNING( "GPIO IRQ init, pin 0x%x\n", pin);
+#endif
+      switch(irq_mode){
+        case HAL_GPIO_IRQ_MODE_OFF:
+          gpio.irq_risingEdge = false;
+          gpio.irq_fallingEdge = false;
+          gpio.irq_en = false;
+          break;
+        case HAL_GPIO_IRQ_MODE_RISING:
+          gpio.irq_risingEdge = true;
+          gpio.irq_fallingEdge = false;
+          gpio.irq_en = true;
+          break;
+        case HAL_GPIO_IRQ_MODE_FALLING:
+          gpio.irq_risingEdge = false;
+          gpio.irq_fallingEdge = true;
+          gpio.irq_en = true;
+          break;
+        case HAL_GPIO_IRQ_MODE_RISING_FALLING:
+          gpio.irq_risingEdge = true;
+          gpio.irq_fallingEdge = true;
+          gpio.irq_en = true;
+          break;
+      }
+
+      GPIO_ExtIntConfig(gpio.port,
+                        gpio.pin_num,
+                        gpio.pin_num,
+                        gpio.irq_risingEdge,
+                        gpio.irq_fallingEdge,
+                        gpio.irq_en);
+
+      // Register callback functions and enable interrupts
+      GPIOINT_CallbackRegister(gpio.pin_num, HAL_GPIO_EXTI_Callback);
+      GPIO_IntEnable(1<<gpio.pin_num);
   }
-
-  GPIO_ExtIntConfig(gpio.port,
-                    gpio.pin_num,
-                    gpio.pin_num,
-                    gpio.irq_risingEdge,
-                    gpio.irq_fallingEdge,
-                    gpio.irq_en);
-
-  // Register callback functions and enable interrupts
-    GPIOINT_CallbackRegister(gpio.pin_num, HAL_GPIO_EXTI_Callback);
-    hal_gpio_irq_attach(irq);
 }
 
 void hal_gpio_irq_attach( const hal_gpio_irq_t* irq )
 {
+#ifdef DEBUG_HAL_GPIO
+  SMTC_MODEM_HAL_TRACE_WARNING( "hal_gpio_irq_attach, pin 0x%x\n", irq->pin);
+#endif
   if( ( irq != NULL ) && ( irq->callback != NULL ) )
     {
       gpio_irq[( irq->pin ) & 0x0F] = irq;
@@ -238,15 +254,27 @@ void hal_gpio_irq_deatach( const hal_gpio_irq_t* irq )
 static uint32_t gpio_interrupt_state;
 void hal_gpio_irq_enable( void )
 {
-  GPIO_IntEnable(gpio_interrupt_state);
+#ifdef DEBUG_HAL_GPIO
+  gpio_interrupt_state = GPIO_EnabledIntGet();
+  SMTC_MODEM_HAL_TRACE_WARNING( "GPIO IRQ enabled, state 0x%x\n", gpio_interrupt_state);
+#endif
+
+//  GPIO_IntEnable(gpio_interrupt_state);
+  NVIC_EnableIRQ(GPIO_EVEN_IRQn);
+  NVIC_EnableIRQ(GPIO_ODD_IRQn);
 
 }
 
 void hal_gpio_irq_disable( void )
 {
-
+#ifdef DEBUG_HAL_GPIO
   gpio_interrupt_state = GPIO_EnabledIntGet();
-  GPIO_IntDisable(0xFFFFFFFF);
+  SMTC_MODEM_HAL_TRACE_WARNING( "GPIO IRQ disabled, state 0x%x\n", gpio_interrupt_state);
+#endif
+
+//  GPIO_IntDisable(0xFFFFFFFF);
+  NVIC_DisableIRQ(GPIO_EVEN_IRQn);
+  NVIC_DisableIRQ(GPIO_ODD_IRQn);
 }
 
 /**
@@ -294,83 +322,83 @@ void hal_gpio_clear_pending_irq( const hal_gpio_pin_names_t pin )
 
 static void hal_gpio_init( const hal_gpio_t* gpio, const hal_gpio_state_t value, const hal_gpio_irq_t* irq )
 {
-//  GPIO_InitTypeDef gpio_local;
-//  GPIO_TypeDef*    gpio_port = ( GPIO_TypeDef* ) ( AHB2PERIPH_BASE + ( ( gpio->pin & 0xF0 ) << 6 ) );
-//
-//  gpio_local.Pin       = ( 1 << ( gpio->pin & 0x0F ) );
-//  gpio_local.Mode      = gpio->mode;
-//  gpio_local.Pull      = gpio->pull;
-//  gpio_local.Speed     = gpio->speed;
-//  gpio_local.Alternate = gpio->alternate;
-//
-//  if( gpio_port == GPIOA )
-//    {
-//      __HAL_RCC_GPIOA_CLK_ENABLE( );
-//    }
-//  else if( gpio_port == GPIOB )
-//    {
-//      __HAL_RCC_GPIOB_CLK_ENABLE( );
-//    }
-//  else if( gpio_port == GPIOC )
-//    {
-//      __HAL_RCC_GPIOC_CLK_ENABLE( );
-//    }
-//  else if( gpio_port == GPIOD )
-//    {
-//      __HAL_RCC_GPIOD_CLK_ENABLE( );
-//    }
-//  else if( gpio_port == GPIOE )
-//    {
-//      __HAL_RCC_GPIOE_CLK_ENABLE( );
-//    }
-//  else if( gpio_port == GPIOH )
-//    {
-//      __HAL_RCC_GPIOH_CLK_ENABLE( );
-//    }
-//
-//  HAL_GPIO_WritePin( gpio_port, gpio_local.Pin, ( GPIO_PinState ) value );
-//  HAL_GPIO_Init( gpio_port, &gpio_local );
-//
-//  if( ( gpio->mode == GPIO_MODE_IT_RISING ) || ( gpio->mode == GPIO_MODE_IT_FALLING ) ||
-//      ( gpio->mode == GPIO_MODE_IT_RISING_FALLING ) )
-//    {
-//      hal_gpio_irq_attach( irq );
-//      switch( gpio->pin & 0x0F )
-//      {
-//        case 0:
-//          HAL_NVIC_SetPriority( EXTI0_IRQn, 0, 0 );
-//          HAL_NVIC_EnableIRQ( EXTI0_IRQn );
-//          break;
-//        case 1:
-//          HAL_NVIC_SetPriority( EXTI1_IRQn, 0, 0 );
-//          HAL_NVIC_EnableIRQ( EXTI1_IRQn );
-//          break;
-//        case 2:
-//          HAL_NVIC_SetPriority( EXTI2_IRQn, 0, 0 );
-//          HAL_NVIC_EnableIRQ( EXTI2_IRQn );
-//          break;
-//        case 3:
-//          HAL_NVIC_SetPriority( EXTI3_IRQn, 0, 0 );
-//          HAL_NVIC_EnableIRQ( EXTI3_IRQn );
-//          break;
-//        case 4:
-//          HAL_NVIC_SetPriority( EXTI4_IRQn, 0, 0 );
-//          HAL_NVIC_EnableIRQ( EXTI4_IRQn );
-//          break;
-//        case 5:
-//        case 6:
-//        case 7:
-//        case 8:
-//        case 9:
-//          HAL_NVIC_SetPriority( EXTI9_5_IRQn, 0, 0 );
-//          HAL_NVIC_EnableIRQ( EXTI9_5_IRQn );
-//          break;
-//        default:
-//          HAL_NVIC_SetPriority( EXTI15_10_IRQn, 0, 0 );
-//          HAL_NVIC_EnableIRQ( EXTI15_10_IRQn );
-//          break;
-//      }
-//    }
+  //  GPIO_InitTypeDef gpio_local;
+  //  GPIO_TypeDef*    gpio_port = ( GPIO_TypeDef* ) ( AHB2PERIPH_BASE + ( ( gpio->pin & 0xF0 ) << 6 ) );
+  //
+  //  gpio_local.Pin       = ( 1 << ( gpio->pin & 0x0F ) );
+  //  gpio_local.Mode      = gpio->mode;
+  //  gpio_local.Pull      = gpio->pull;
+  //  gpio_local.Speed     = gpio->speed;
+  //  gpio_local.Alternate = gpio->alternate;
+  //
+  //  if( gpio_port == GPIOA )
+  //    {
+  //      __HAL_RCC_GPIOA_CLK_ENABLE( );
+  //    }
+  //  else if( gpio_port == GPIOB )
+  //    {
+  //      __HAL_RCC_GPIOB_CLK_ENABLE( );
+  //    }
+  //  else if( gpio_port == GPIOC )
+  //    {
+  //      __HAL_RCC_GPIOC_CLK_ENABLE( );
+  //    }
+  //  else if( gpio_port == GPIOD )
+  //    {
+  //      __HAL_RCC_GPIOD_CLK_ENABLE( );
+  //    }
+  //  else if( gpio_port == GPIOE )
+  //    {
+  //      __HAL_RCC_GPIOE_CLK_ENABLE( );
+  //    }
+  //  else if( gpio_port == GPIOH )
+  //    {
+  //      __HAL_RCC_GPIOH_CLK_ENABLE( );
+  //    }
+  //
+  //  HAL_GPIO_WritePin( gpio_port, gpio_local.Pin, ( GPIO_PinState ) value );
+  //  HAL_GPIO_Init( gpio_port, &gpio_local );
+  //
+  //  if( ( gpio->mode == GPIO_MODE_IT_RISING ) || ( gpio->mode == GPIO_MODE_IT_FALLING ) ||
+  //      ( gpio->mode == GPIO_MODE_IT_RISING_FALLING ) )
+  //    {
+  //      hal_gpio_irq_attach( irq );
+  //      switch( gpio->pin & 0x0F )
+  //      {
+  //        case 0:
+  //          HAL_NVIC_SetPriority( EXTI0_IRQn, 0, 0 );
+  //          HAL_NVIC_EnableIRQ( EXTI0_IRQn );
+  //          break;
+  //        case 1:
+  //          HAL_NVIC_SetPriority( EXTI1_IRQn, 0, 0 );
+  //          HAL_NVIC_EnableIRQ( EXTI1_IRQn );
+  //          break;
+  //        case 2:
+  //          HAL_NVIC_SetPriority( EXTI2_IRQn, 0, 0 );
+  //          HAL_NVIC_EnableIRQ( EXTI2_IRQn );
+  //          break;
+  //        case 3:
+  //          HAL_NVIC_SetPriority( EXTI3_IRQn, 0, 0 );
+  //          HAL_NVIC_EnableIRQ( EXTI3_IRQn );
+  //          break;
+  //        case 4:
+  //          HAL_NVIC_SetPriority( EXTI4_IRQn, 0, 0 );
+  //          HAL_NVIC_EnableIRQ( EXTI4_IRQn );
+  //          break;
+  //        case 5:
+  //        case 6:
+  //        case 7:
+  //        case 8:
+  //        case 9:
+  //          HAL_NVIC_SetPriority( EXTI9_5_IRQn, 0, 0 );
+  //          HAL_NVIC_EnableIRQ( EXTI9_5_IRQn );
+  //          break;
+  //        default:
+  //          HAL_NVIC_SetPriority( EXTI15_10_IRQn, 0, 0 );
+  //          HAL_NVIC_EnableIRQ( EXTI15_10_IRQn );
+  //          break;
+  //      }
+  //    }
 }
 
 /******************************************************************************/
@@ -388,7 +416,7 @@ void EXTI0_IRQHandler( void )
   /* USER CODE BEGIN EXTI0_IRQn 0 */
 
   /* USER CODE END EXTI0_IRQn 0 */
-//  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_0 );
+  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_0 );
   /* USER CODE BEGIN EXTI0_IRQn 1 */
 
   /* USER CODE END EXTI0_IRQn 1 */
@@ -402,7 +430,7 @@ void EXTI1_IRQHandler( void )
   /* USER CODE BEGIN EXTI1_IRQn 0 */
 
   /* USER CODE END EXTI1_IRQn 0 */
-//  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_1 );
+  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_1 );
 
   /* USER CODE BEGIN EXTI1_IRQn 1 */
 
@@ -417,7 +445,7 @@ void EXTI2_IRQHandler( void )
   /* USER CODE BEGIN EXTI2_IRQn 0 */
 
   /* USER CODE END EXTI2_IRQn 0 */
-//  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_2 );
+  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_2 );
   /* USER CODE BEGIN EXTI2_IRQn 1 */
 
   /* USER CODE END EXTI2_IRQn 1 */
@@ -431,7 +459,7 @@ void EXTI3_IRQHandler( void )
   /* USER CODE BEGIN EXTI3_IRQn 0 */
 
   /* USER CODE END EXTI3_IRQn 0 */
-//  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_3 );
+  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_3 );
   /* USER CODE BEGIN EXTI3_IRQn 1 */
 
   /* USER CODE END EXTI3_IRQn 1 */
@@ -445,7 +473,7 @@ void EXTI4_IRQHandler( void )
   /* USER CODE BEGIN EXTI4_IRQn 0 */
 
   /* USER CODE END EXTI4_IRQn 0 */
-//  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_4 );
+  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_4 );
   /* USER CODE BEGIN EXTI4_IRQn 1 */
 
   /* USER CODE END EXTI4_IRQn 1 */
@@ -459,12 +487,12 @@ void EXTI9_5_IRQHandler( void )
   /* USER CODE BEGIN EXTI9_5_IRQn 0 */
 
   /* USER CODE END EXTI9_5_IRQn 0 */
-//  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_5 );
-//  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_6 );
-//  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_7 );
-//  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_8 );
-//  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_9 );
-//  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
+  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_5 );
+  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_6 );
+  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_7 );
+  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_8 );
+  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_9 );
+  //  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
 
   /* USER CODE END EXTI9_5_IRQn 1 */
 }
@@ -475,30 +503,27 @@ void EXTI15_10_IRQHandler( void )
 {
   /* USER CODE BEGIN EXTI15_15_IRQn 0 */
 
-//  /* USER CODE END EXTI15_15_IRQn 0 */
-//  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_10 );
-//  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_11 );
-//  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_12 );
-//  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_13 );
-//  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_14 );
-//  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_15 );
-//  /* USER CODE BEGIN EXTI15_15_IRQn 1 */
+  //  /* USER CODE END EXTI15_15_IRQn 0 */
+  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_10 );
+  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_11 );
+  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_12 );
+  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_13 );
+  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_14 );
+  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_15 );
+  //  /* USER CODE BEGIN EXTI15_15_IRQn 1 */
 
   /* USER CODE END EXTI15_15_IRQn 1 */
 }
 
-void HAL_GPIO_EXTI_Callback( uint16_t gpio_pin )
+void HAL_GPIO_EXTI_Callback( uint8_t gpio_pin )
 {
   uint8_t callback_index = 0;
-
+#ifdef DEBUG_HAL_GPIO
+//  SMTC_MODEM_HAL_TRACE_WARNING( "GPIO IRQ , pin 0x%x\n", gpio_pin);
+#endif
   if( gpio_pin > 0 )
     {
-      while( gpio_pin != 0x01 )
-        {
-          gpio_pin = gpio_pin >> 1;
-          callback_index++;
-        }
-
+      callback_index = gpio_pin;
       if( ( gpio_irq[callback_index] != NULL ) && ( gpio_irq[callback_index]->callback != NULL ) )
         {
           gpio_irq[callback_index]->callback( gpio_irq[callback_index]->context );
