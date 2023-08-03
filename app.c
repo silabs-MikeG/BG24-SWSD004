@@ -18,6 +18,7 @@
  ****************************************************************************/
 #include "sl_sleeptimer.h"
 #include "main_geolocation_gnss_wifi.h"
+#include "smtc_hal_gpio.h"
 
 
 sl_sleeptimer_timer_handle_t handleAppTimer;
@@ -47,6 +48,7 @@ void app_init(void)
 void app_process_action(void)
 {
 
+  hal_gpio_check_irq_flag();
   uint32_t sleep_time_ms = geolocation_process();
   if(sleep_time_ms == 0 )
     sleep_time_ms = 1;

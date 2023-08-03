@@ -37,7 +37,7 @@
  * --- DEPENDENCIES ------------------------------------------------------------
  */
 
-//#define DEBUG_HAL_GPIO
+#define DEBUG_HAL_GPIO
 #include <stdint.h>   // C99 types
 #include <stdbool.h>  // bool type
 
@@ -401,134 +401,47 @@ static void hal_gpio_init( const hal_gpio_t* gpio, const hal_gpio_state_t value,
   //    }
 }
 
-/******************************************************************************/
-/* STM32L4xx Peripheral Interrupt Handlers                                    */
-/* Add here the Interrupt Handlers for the used peripherals.                  */
-/* For the available peripheral interrupt handler names,                      */
-/* please refer to the startup file (startup_stm32l4xx.s).                    */
-/******************************************************************************/
 
-/**
- * @brief This function handles EXTI line0 interrupt.
- */
-void EXTI0_IRQHandler( void )
-{
-  /* USER CODE BEGIN EXTI0_IRQn 0 */
+uint32_t gpio_irq_flags = 0;
 
-  /* USER CODE END EXTI0_IRQn 0 */
-  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_0 );
-  /* USER CODE BEGIN EXTI0_IRQn 1 */
+void hal_gpio_check_irq_flag(void){
+  uint8_t callback_index = 0;
 
-  /* USER CODE END EXTI0_IRQn 1 */
-}
+  if( gpio_irq_flags > 0 )
+    {
+      for(callback_index = 0; callback_index < 16; callback_index++){
 
-/**
- * @brief This function handles EXTI line1 interrupt.
- */
-void EXTI1_IRQHandler( void )
-{
-  /* USER CODE BEGIN EXTI1_IRQn 0 */
-
-  /* USER CODE END EXTI1_IRQn 0 */
-  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_1 );
-
-  /* USER CODE BEGIN EXTI1_IRQn 1 */
-
-  /* USER CODE END EXTI1_IRQn 1 */
-}
-
-/**
- * @brief This function handles EXTI line2 interrupt.
- */
-void EXTI2_IRQHandler( void )
-{
-  /* USER CODE BEGIN EXTI2_IRQn 0 */
-
-  /* USER CODE END EXTI2_IRQn 0 */
-  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_2 );
-  /* USER CODE BEGIN EXTI2_IRQn 1 */
-
-  /* USER CODE END EXTI2_IRQn 1 */
-}
-
-/**
- * @brief This function handles EXTI line3 interrupt.
- */
-void EXTI3_IRQHandler( void )
-{
-  /* USER CODE BEGIN EXTI3_IRQn 0 */
-
-  /* USER CODE END EXTI3_IRQn 0 */
-  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_3 );
-  /* USER CODE BEGIN EXTI3_IRQn 1 */
-
-  /* USER CODE END EXTI3_IRQn 1 */
-}
-
-/**
- * @brief This function handles EXTI line4 interrupt.
- */
-void EXTI4_IRQHandler( void )
-{
-  /* USER CODE BEGIN EXTI4_IRQn 0 */
-
-  /* USER CODE END EXTI4_IRQn 0 */
-  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_4 );
-  /* USER CODE BEGIN EXTI4_IRQn 1 */
-
-  /* USER CODE END EXTI4_IRQn 1 */
-}
-
-/**
- * @brief This function handles EXTI line[9:5] interrupts.
- */
-void EXTI9_5_IRQHandler( void )
-{
-  /* USER CODE BEGIN EXTI9_5_IRQn 0 */
-
-  /* USER CODE END EXTI9_5_IRQn 0 */
-  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_5 );
-  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_6 );
-  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_7 );
-  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_8 );
-  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_9 );
-  //  /* USER CODE BEGIN EXTI9_5_IRQn 1 */
-
-  /* USER CODE END EXTI9_5_IRQn 1 */
-}
-/**
- * @brief This function handles EXTI line[15:10] interrupts.
- */
-void EXTI15_10_IRQHandler( void )
-{
-  /* USER CODE BEGIN EXTI15_15_IRQn 0 */
-
-  //  /* USER CODE END EXTI15_15_IRQn 0 */
-  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_10 );
-  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_11 );
-  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_12 );
-  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_13 );
-  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_14 );
-  //  HAL_GPIO_EXTI_IRQHandler( GPIO_PIN_15 );
-  //  /* USER CODE BEGIN EXTI15_15_IRQn 1 */
-
-  /* USER CODE END EXTI15_15_IRQn 1 */
+          if((1<<callback_index) & gpio_irq_flags){
+              if( ( gpio_irq[callback_index] != NULL ) && ( gpio_irq[callback_index]->callback != NULL ) )
+                {
+#ifdef DEBUG_HAL_GPIO
+                  SMTC_MODEM_HAL_TRACE_WARNING( "GPIO IRQ callback start\n");
+#endif
+                  gpio_irq[callback_index]->callback( gpio_irq[callback_index]->context );
+#ifdef DEBUG_HAL_GPIO
+                  SMTC_MODEM_HAL_TRACE_WARNING( "GPIO IRQ callback end\n");
+#endif
+                }
+          }
+      }
+    }
 }
 
 void HAL_GPIO_EXTI_Callback( uint8_t gpio_pin )
 {
-  uint8_t callback_index = 0;
+//  uint8_t callback_index = 0;
 #ifdef DEBUG_HAL_GPIO
 //  SMTC_MODEM_HAL_TRACE_WARNING( "GPIO IRQ , pin 0x%x\n", gpio_pin);
 #endif
-  if( gpio_pin > 0 )
-    {
-      callback_index = gpio_pin;
-      if( ( gpio_irq[callback_index] != NULL ) && ( gpio_irq[callback_index]->callback != NULL ) )
-        {
-          gpio_irq[callback_index]->callback( gpio_irq[callback_index]->context );
-        }
-    }
+  gpio_irq_flags |= (1<<gpio_pin);
+//  if( gpio_pin > 0 )
+//    {
+//      callback_index = gpio_pin;
+//      if( ( gpio_irq[callback_index] != NULL ) && ( gpio_irq[callback_index]->callback != NULL ) )
+//        {
+//          gpio_irq[callback_index]->callback( gpio_irq[callback_index]->context );
+//        }
+//    }
 }
 
 /* --- EOF ------------------------------------------------------------------ */

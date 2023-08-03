@@ -265,13 +265,11 @@ lr1mac_states_t lr1mac_core_process( lr1_stack_mac_t* lr1_mac_obj )
 
             if( smtc_lbt_get_state( lr1_mac_obj->lbt_obj ) == true )
             {
-                SMTC_MODEM_HAL_TRACE_PRINTF("LoRa LTB True");
                 smtc_lbt_listen_channel( ( lr1_mac_obj->lbt_obj ), lr1_mac_obj->tx_frequency, lr1_mac_obj->send_at_time,
                                          lr1_mac_obj->rtc_target_timer_ms, lr1_stack_toa_get( lr1_mac_obj ) );
             }
             else
             {
-                SMTC_MODEM_HAL_TRACE_PRINTF("LoRa radio start\n");
                 lr1_stack_mac_tx_radio_start( lr1_mac_obj );
             }
             break;
