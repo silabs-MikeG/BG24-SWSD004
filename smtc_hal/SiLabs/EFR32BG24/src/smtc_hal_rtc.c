@@ -387,6 +387,7 @@ void hal_rtc_delay_in_ms( const uint32_t milliseconds )
 void hal_rtc_wakeup_timer_set_ms( const int32_t milliseconds )
 {
   uint32_t delay_ms_2_tick = sl_sleeptimer_ms_to_tick( milliseconds );
+  sl_status_t ret = SL_STATUS_FAIL;
 //
 //  HAL_RTCEx_DeactivateWakeUpTimer( &hal_rtc.handle );
 //  /* reset irq status */
@@ -395,10 +396,17 @@ void hal_rtc_wakeup_timer_set_ms( const int32_t milliseconds )
 #ifdef DEBUG_HAL_RTC
   SMTC_MODEM_HAL_TRACE_WARNING( "hal_rtc_wakeup_timer_set_ms, delay %d ms\n",milliseconds);
 #endif
-  sl_sleeptimer_start_timer(&handleRtcWakeupTimer, delay_ms_2_tick, wakeUpTimerCallback, NULL, 0, 0);
+  ret = sl_sleeptimer_start_timer(&handleRtcWakeupTimer, delay_ms_2_tick, wakeUpTimerCallback, NULL, 0, 0);
+  if (ret == SL_STATUS_OK )
+    {
+#ifdef DEBUG_HAL_RTC
+      SMTC_MODEM_HAL_TRACE_WARNING( "sl_sleeptimer_start_timer return OK\n");
+#endif
+    }
+
 }
 
-void hal_rtc_wakeup_timer_stop( void ) { sl_sleep_stop_timer(&handleRtcWakeupTimer); }
+void hal_rtc_wakeup_timer_stop( void ) { sl_sleeptimer_stop_timer(&handleRtcWakeupTimer); }
 
 bool hal_rtc_has_wut_irq_happened( void ) { return wut_timer_irq_happened; }
 

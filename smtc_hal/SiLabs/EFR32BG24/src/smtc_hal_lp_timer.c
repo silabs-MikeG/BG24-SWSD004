@@ -71,7 +71,7 @@ static hal_lp_timer_irq_t lptim_tmr_irq = { .context = NULL, .callback = NULL };
 
 sl_sleeptimer_timer_handle_t handleLpLoraTimer;
 
-void lpTimerCallback(sl_sleeptimer_timer_handle_t *handle, void *data);
+sl_sleeptimer_timer_callback_t lpTimerCallback(sl_sleeptimer_timer_handle_t *handle, void *data);
 
 /*
  * -----------------------------------------------------------------------------
@@ -128,11 +128,11 @@ void hal_lp_timer_start( const uint32_t milliseconds, const hal_lp_timer_irq_t* 
 
 void hal_lp_timer_stop( void ) { sl_sleeptimer_stop_timer (&handleLpLoraTimer); }
 
-void hal_lp_timer_irq_enable( void ) {  }
+void hal_lp_timer_irq_enable( void ) { NVIC_EnableIRQ( SYSRTC_APP_IRQn ); }
 
-void hal_lp_timer_irq_disable( void ) {  }
+void hal_lp_timer_irq_disable( void ) { NVIC_DisableIRQ( SYSRTC_APP_IRQn ); }
 
-void lpTimerCallback(sl_sleeptimer_timer_handle_t *handle, void *data)
+sl_sleeptimer_timer_callback_t lpTimerCallback(sl_sleeptimer_timer_handle_t *handle, void *data)
 {
 
     sl_sleeptimer_stop_timer (&handleLpLoraTimer);

@@ -288,6 +288,15 @@ void smtc_modem_hal_irq_config_radio_irq( void ( *callback )( void* context ), v
     hal_gpio_irq_attach( &radio_dio_irq );
 }
 
+void smtc_modem_hal_irq_clear_radio_irq( void )
+{
+    radio_dio_irq.pin      = SMTC_RADIO_DIOX;
+    radio_dio_irq.callback = NULL;
+    radio_dio_irq.context  = NULL;
+
+    hal_gpio_irq_deatach( &radio_dio_irq );
+}
+
 void smtc_modem_hal_radio_irq_clear_pending( void )
 {
     hal_gpio_clear_pending_irq( SMTC_RADIO_DIOX );
@@ -305,7 +314,7 @@ void smtc_modem_hal_stop_radio_tcxo( void )
 
 uint32_t smtc_modem_hal_get_radio_tcxo_startup_delay_ms( void )
 {
-    return 30;
+    return 35;//30;
 }
 
 /* ------------ Environment management ------------*/

@@ -430,7 +430,7 @@ void rp_radio_irq( radio_planner_t* rp )
     }
     else
     {
-        SMTC_MODEM_HAL_TRACE_PRINTF( " radio planner it but no more task activated\n" );
+        SMTC_MODEM_HAL_RP_TRACE_PRINTF( " radio planner it but no more task activated\n" );
     }
 
     // Shut Down the TCXO

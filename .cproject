@@ -55,6 +55,7 @@
 									<listOptionValue builtIn="false" value="SL_COMPONENT_CATALOG_PRESENT=1"/>
 									<listOptionValue builtIn="false" value="MBEDTLS_CONFIG_FILE=&lt;sl_mbedtls_config.h&gt;"/>
 									<listOptionValue builtIn="false" value="MBEDTLS_PSA_CRYPTO_CONFIG_FILE=&lt;psa_crypto_config.h&gt;"/>
+									<listOptionValue builtIn="false" value="REGION_EU_868=1"/>
 								</option>
 								<option id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.debug.builtin.142734191" name="Always branch to builtin functions (-fno-builtin)" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.debug.builtin" value="true" valueType="boolean"/>
 								<option id="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.debug.prolog.1130200779" name="Generate debugger-friendly prologs (-mno-sched-prolog)" superClass="com.silabs.ide.si32.gcc.cdt.managedbuild.tool.gnu.c.compiler.debug.prolog" value="true" valueType="boolean"/>

@@ -37,7 +37,7 @@
  * --- DEPENDENCIES ------------------------------------------------------------
  */
 
-#define DEBUG_HAL_GPIO
+//#define DEBUG_HAL_GPIO
 #include <stdint.h>   // C99 types
 #include <stdbool.h>  // bool type
 
@@ -221,7 +221,7 @@ void hal_gpio_init_in( const hal_gpio_pin_names_t pin, const hal_gpio_pull_mode_
 
       GPIO_ExtIntConfig(gpio.port,
                         gpio.pin_num,
-                        gpio.pin_num,
+                        gpio.pin_num, //Murata: TODO should be intno.
                         gpio.irq_risingEdge,
                         gpio.irq_fallingEdge,
                         gpio.irq_en);
@@ -308,11 +308,12 @@ uint32_t hal_gpio_get_value( const hal_gpio_pin_names_t pin )
 
 void hal_gpio_clear_pending_irq( const hal_gpio_pin_names_t pin )
 {
-  uint8_t temp_pin;
+  //uint8_t temp_pin;
 
-  temp_pin = hal_get_gpio_pin_num(pin);
-  GPIO_IntClear ((1 << temp_pin));
-
+  //temp_pin = hal_get_gpio_pin_num(pin);
+  //GPIO_IntClear ((1 << temp_pin));
+  NVIC_ClearPendingIRQ(GPIO_EVEN_IRQn);
+  NVIC_ClearPendingIRQ(GPIO_ODD_IRQn);
 }
 
 /*
@@ -429,19 +430,19 @@ void hal_gpio_check_irq_flag(void){
 
 void HAL_GPIO_EXTI_Callback( uint8_t gpio_pin )
 {
-//  uint8_t callback_index = 0;
+  uint8_t callback_index = 0;
 #ifdef DEBUG_HAL_GPIO
-//  SMTC_MODEM_HAL_TRACE_WARNING( "GPIO IRQ , pin 0x%x\n", gpio_pin);
+  SMTC_MODEM_HAL_TRACE_WARNING( "****HD:HAL_GPIO_EXTI_Callback,gpio_pin: 0x%x\n",gpio_pin);
 #endif
   gpio_irq_flags |= (1<<gpio_pin);
-//  if( gpio_pin > 0 )
-//    {
-//      callback_index = gpio_pin;
-//      if( ( gpio_irq[callback_index] != NULL ) && ( gpio_irq[callback_index]->callback != NULL ) )
-//        {
-//          gpio_irq[callback_index]->callback( gpio_irq[callback_index]->context );
-//        }
-//    }
+  //if( gpio_pin > 0 )
+    //{
+      callback_index = gpio_pin;
+      if( ( gpio_irq[callback_index] != NULL ) && ( gpio_irq[callback_index]->callback != NULL ) )
+        {
+          gpio_irq[callback_index]->callback( gpio_irq[callback_index]->context );
+        }
+    //}
 }
 
 /* --- EOF ------------------------------------------------------------------ */
