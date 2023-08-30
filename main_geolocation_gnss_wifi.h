@@ -51,10 +51,6 @@ extern "C" {
 
 #include <stdint.h>
 
-
-//extern static ralf_t* modem_radio;
-
-
 /*
  * -----------------------------------------------------------------------------
  * --- Application Configuration -----------------------------------------------
@@ -157,9 +153,8 @@ extern "C" {
 #endif
 
 
-int geolocation_init( void );
+void geolocation_init( void );
 uint32_t geolocation_process( void );
-
 
 #endif  // MAIN_GEOLOCATION_GNSS_WIFI_H
 

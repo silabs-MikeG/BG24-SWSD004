@@ -301,8 +301,6 @@ void hal_gpio_toggle( const hal_gpio_pin_names_t pin )
 
 uint32_t hal_gpio_get_value( const hal_gpio_pin_names_t pin )
 {
-
-
   return ( GPIO_PinInGet (hal_get_gpio_port(pin), hal_get_gpio_pin_num(pin)));
 }
 
@@ -323,118 +321,16 @@ void hal_gpio_clear_pending_irq( const hal_gpio_pin_names_t pin )
 
 static void hal_gpio_init( const hal_gpio_t* gpio, const hal_gpio_state_t value, const hal_gpio_irq_t* irq )
 {
-  //  GPIO_InitTypeDef gpio_local;
-  //  GPIO_TypeDef*    gpio_port = ( GPIO_TypeDef* ) ( AHB2PERIPH_BASE + ( ( gpio->pin & 0xF0 ) << 6 ) );
-  //
-  //  gpio_local.Pin       = ( 1 << ( gpio->pin & 0x0F ) );
-  //  gpio_local.Mode      = gpio->mode;
-  //  gpio_local.Pull      = gpio->pull;
-  //  gpio_local.Speed     = gpio->speed;
-  //  gpio_local.Alternate = gpio->alternate;
-  //
-  //  if( gpio_port == GPIOA )
-  //    {
-  //      __HAL_RCC_GPIOA_CLK_ENABLE( );
-  //    }
-  //  else if( gpio_port == GPIOB )
-  //    {
-  //      __HAL_RCC_GPIOB_CLK_ENABLE( );
-  //    }
-  //  else if( gpio_port == GPIOC )
-  //    {
-  //      __HAL_RCC_GPIOC_CLK_ENABLE( );
-  //    }
-  //  else if( gpio_port == GPIOD )
-  //    {
-  //      __HAL_RCC_GPIOD_CLK_ENABLE( );
-  //    }
-  //  else if( gpio_port == GPIOE )
-  //    {
-  //      __HAL_RCC_GPIOE_CLK_ENABLE( );
-  //    }
-  //  else if( gpio_port == GPIOH )
-  //    {
-  //      __HAL_RCC_GPIOH_CLK_ENABLE( );
-  //    }
-  //
-  //  HAL_GPIO_WritePin( gpio_port, gpio_local.Pin, ( GPIO_PinState ) value );
-  //  HAL_GPIO_Init( gpio_port, &gpio_local );
-  //
-  //  if( ( gpio->mode == GPIO_MODE_IT_RISING ) || ( gpio->mode == GPIO_MODE_IT_FALLING ) ||
-  //      ( gpio->mode == GPIO_MODE_IT_RISING_FALLING ) )
-  //    {
-  //      hal_gpio_irq_attach( irq );
-  //      switch( gpio->pin & 0x0F )
-  //      {
-  //        case 0:
-  //          HAL_NVIC_SetPriority( EXTI0_IRQn, 0, 0 );
-  //          HAL_NVIC_EnableIRQ( EXTI0_IRQn );
-  //          break;
-  //        case 1:
-  //          HAL_NVIC_SetPriority( EXTI1_IRQn, 0, 0 );
-  //          HAL_NVIC_EnableIRQ( EXTI1_IRQn );
-  //          break;
-  //        case 2:
-  //          HAL_NVIC_SetPriority( EXTI2_IRQn, 0, 0 );
-  //          HAL_NVIC_EnableIRQ( EXTI2_IRQn );
-  //          break;
-  //        case 3:
-  //          HAL_NVIC_SetPriority( EXTI3_IRQn, 0, 0 );
-  //          HAL_NVIC_EnableIRQ( EXTI3_IRQn );
-  //          break;
-  //        case 4:
-  //          HAL_NVIC_SetPriority( EXTI4_IRQn, 0, 0 );
-  //          HAL_NVIC_EnableIRQ( EXTI4_IRQn );
-  //          break;
-  //        case 5:
-  //        case 6:
-  //        case 7:
-  //        case 8:
-  //        case 9:
-  //          HAL_NVIC_SetPriority( EXTI9_5_IRQn, 0, 0 );
-  //          HAL_NVIC_EnableIRQ( EXTI9_5_IRQn );
-  //          break;
-  //        default:
-  //          HAL_NVIC_SetPriority( EXTI15_10_IRQn, 0, 0 );
-  //          HAL_NVIC_EnableIRQ( EXTI15_10_IRQn );
-  //          break;
-  //      }
-  //    }
-}
 
-
-uint32_t gpio_irq_flags = 0;
-
-void hal_gpio_check_irq_flag(void){
-  uint8_t callback_index = 0;
-
-  if( gpio_irq_flags > 0 )
-    {
-      for(callback_index = 0; callback_index < 16; callback_index++){
-
-          if((1<<callback_index) & gpio_irq_flags){
-              if( ( gpio_irq[callback_index] != NULL ) && ( gpio_irq[callback_index]->callback != NULL ) )
-                {
-#ifdef DEBUG_HAL_GPIO
-                  SMTC_MODEM_HAL_TRACE_WARNING( "GPIO IRQ callback start\n");
-#endif
-                  gpio_irq[callback_index]->callback( gpio_irq[callback_index]->context );
-#ifdef DEBUG_HAL_GPIO
-                  SMTC_MODEM_HAL_TRACE_WARNING( "GPIO IRQ callback end\n");
-#endif
-                }
-          }
-      }
-    }
 }
 
 void HAL_GPIO_EXTI_Callback( uint8_t gpio_pin )
 {
   uint8_t callback_index = 0;
 #ifdef DEBUG_HAL_GPIO
-  SMTC_MODEM_HAL_TRACE_WARNING( "****HD:HAL_GPIO_EXTI_Callback,gpio_pin: 0x%x\n",gpio_pin);
+  SMTC_MODEM_HAL_TRACE_WARNING( "HAL_GPIO_EXTI_Callback,gpio_pin: 0x%x\n",gpio_pin);
 #endif
-  gpio_irq_flags |= (1<<gpio_pin);
+  //gpio_irq_flags |= (1<<gpio_pin);
   //if( gpio_pin > 0 )
     //{
       callback_index = gpio_pin;

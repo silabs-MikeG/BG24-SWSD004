@@ -86,21 +86,6 @@ sl_sleeptimer_timer_callback_t lpTimerCallback(sl_sleeptimer_timer_handle_t *han
 void hal_lp_timer_init( void )
 {
   /* Using SiLabs Sleep Timer service for low power timer functions and IRQ  */
-#ifdef TEMP_PORT
-    lptim_handle.Instance             = LPTIM1;
-    lptim_handle.Init.Clock.Source    = LPTIM_CLOCKSOURCE_APBCLOCK_LPOSC;
-    lptim_handle.Init.Clock.Prescaler = LPTIM_PRESCALER_DIV16;
-    lptim_handle.Init.Trigger.Source  = LPTIM_TRIGSOURCE_SOFTWARE;
-    lptim_handle.Init.OutputPolarity  = LPTIM_OUTPUTPOLARITY_HIGH;
-    lptim_handle.Init.UpdateMode      = LPTIM_UPDATE_IMMEDIATE;
-    lptim_handle.Init.CounterSource   = LPTIM_COUNTERSOURCE_INTERNAL;
-
-    if( HAL_LPTIM_Init( &lptim_handle ) != HAL_OK )
-    {
-        mcu_panic( );
-    }
-    lptim_tmr_irq = ( hal_lp_timer_irq_t ){ .context = NULL, .callback = NULL };
-#endif
 }
 
 void hal_lp_timer_start( const uint32_t milliseconds, const hal_lp_timer_irq_t* tmr_irq )
@@ -134,7 +119,6 @@ void hal_lp_timer_irq_disable( void ) { NVIC_DisableIRQ( SYSRTC_APP_IRQn ); }
 
 sl_sleeptimer_timer_callback_t lpTimerCallback(sl_sleeptimer_timer_handle_t *handle, void *data)
 {
-
     sl_sleeptimer_stop_timer (&handleLpLoraTimer);
 #ifdef DEBUG_HAL_LP_TIMER
     SMTC_MODEM_HAL_TRACE_WARNING( "lpTimerCallback\n" );

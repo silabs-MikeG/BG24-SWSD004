@@ -95,12 +95,6 @@ static uint32_t hal_flash_get_page( uint32_t address );
 smtc_hal_status_t hal_flash_init( void )
 {
     uint8_t  status = SMTC_HAL_SUCCESS;
-//    uint32_t nvm_status = SMTC_HAL_SUCCESS;
-//
-//    nvm_status = nvm3_open(nvm3_defaultHandle, nvm3_defaultInit);
-//      if (nvm_status != ECODE_NVM3_OK) {
-//          SMTC_MODEM_HAL_TRACE_INFO( "NVM Init Error error 0x%X %d\n", nvm_status);
-//      }
 
     return status;
 }
@@ -108,71 +102,7 @@ smtc_hal_status_t hal_flash_init( void )
 smtc_hal_status_t hal_flash_erase_page( uint32_t addr, uint8_t nb_page )
 {
     uint8_t  status                = SMTC_HAL_SUCCESS;
-#ifdef TEMP_PORT
-    uint8_t  hal_status            = SMTC_HAL_SUCCESS;
-    uint32_t first_user_page = 0;
-    uint32_t nb_of_pages_max = 0;
-    uint32_t page_error            = 0;
-    uint8_t  flash_operation_retry = 0;
 
-    FLASH_EraseInitTypeDef EraseInitStruct;
-
-    /* Unlock the Flash to enable the flash control register access *************/
-    HAL_FLASH_Unlock( );
-
-    /* Clear OPTVERR bit set on virgin samples */
-    __HAL_FLASH_CLEAR_FLAG( FLASH_FLAG_OPTVERR );
-
-    /* Erase the user Flash area
-    (area defined by flash_user_start_addr and FLASH_USER_END_ADDR) ***********/
-
-    /* Get the 1st page to erase */
-    first_user_page = hal_flash_get_page( addr );
-	
-    /* Get the number of pages to erase from 1st page */
-    nb_of_pages_max = hal_flash_get_page( FLASH_USER_END_ADDR ) - hal_flash_get_page( flash_user_start_addr ) + 1;
-
-    if( ( flash_user_start_addr > addr ) || ( nb_page > nb_of_pages_max ) )
-    {
-        /* Lock the Flash to disable the flash control register access (recommended
-        to protect the FLASH memory against possible unwanted operation) *********/
-        HAL_FLASH_Lock( );
-
-        status = SMTC_HAL_FAILURE;
-        return status;
-    }
-
-    /* Fill EraseInit structure*/
-    EraseInitStruct.TypeErase = FLASH_TYPEERASE_PAGES;
-    EraseInitStruct.Page      = first_user_page;
-    EraseInitStruct.NbPages   = nb_page;
-
-    /* Note: If an erase operation in Flash memory also concerns data in the data or instruction cache,
-     you have to make sure that these data are rewritten before they are accessed during code
-     execution. If this cannot be done safely, it is recommended to flush the caches by setting the
-     DCRST and ICRST bits in the FLASH_CR register. */
-    do
-    {
-        hal_status = HAL_FLASHEx_Erase( &EraseInitStruct, &page_error );
-        flash_operation_retry++;
-    } while( ( hal_status != HAL_OK ) && ( flash_operation_retry < FLASH_OPERATION_MAX_RETRY ) );
-
-    if( flash_operation_retry >= FLASH_OPERATION_MAX_RETRY )
-    {
-        /*
-          Error occurred while  erase.
-          User can add here some code to deal with this error.
-          PageError will contain the faulty  and then to know the code error on this ,
-          user can call function 'HAL_FLASH_GetError()'
-        */
-        HAL_DBG_TRACE_ERROR( "FLASH_OPERATION_MAX_RETRY\r\n" );
-        mcu_panic( );
-    }
-
-    /* Lock the Flash to disable the flash control register access (recommended
-    to protect the FLASH memory against possible unwanted operation) *********/
-    HAL_FLASH_Lock( );
-#endif
     nvm3_deleteObject (nvm3_defaultHandle, addr);
 
     return status;
@@ -184,87 +114,6 @@ smtc_hal_status_t hal_flash_write_buffer( uint32_t addr, const uint8_t* buffer, 
     uint8_t  hal_status   = SMTC_HAL_SUCCESS;
     uint32_t nvm_status = SMTC_HAL_SUCCESS;
     uint32_t real_size = 0;
-#ifdef TEMP_PORT
-    uint32_t buffer_index = 0;
-    uint32_t nb_of_pages_max = 0;
-
-    uint32_t addr_end = 0;
-    uint64_t data64                = 0;
-    uint8_t  flash_operation_retry = 0;
-
-    /* Complete size for FLASH_TYPEPROGRAM_DOUBLEWORD operation*/
-    if( ( size % 8 ) != 0 )
-    {
-        real_size = size + ( 8 - ( size % 8 ) );
-    }
-    else
-    {
-        real_size = size;
-    }
-
-    addr_end = addr + real_size;
-
-    /* Unlock the Flash to enable the flash control register access *************/
-    HAL_FLASH_Unlock( );
-
-    /* Clear OPTVERR bit set on virgin samples */
-    __HAL_FLASH_CLEAR_FLAG( FLASH_FLAG_OPTVERR );
-
-    /* Get the number of pages available */
-    nb_of_pages_max = hal_flash_get_page( FLASH_USER_END_ADDR ) - hal_flash_get_page( flash_user_start_addr ) + 1;
-
-    if( ( flash_user_start_addr > addr ) || ( ( real_size / ADDR_FLASH_PAGE_SIZE ) > nb_of_pages_max ) )
-    {
-        /* Lock the Flash to disable the flash control register access (recommended
-        to protect the FLASH memory against possible unwanted operation) *********/
-        HAL_FLASH_Lock( );
-
-        status = SMTC_HAL_FAILURE;
-        return status;
-    }
-
-    /* Program the user Flash area word by word
-    (area defined by FlashUserStartAddr and FLASH_USER_END_ADDR) ***********/
-
-    while( addr < addr_end )
-    {
-        data64 = 0;
-        for( uint8_t i = 0; i < 8; i++ )
-        {
-            data64 += ( ( ( uint64_t ) buffer[buffer_index + i] ) << ( i * 8 ) );
-        }
-
-        do
-        {
-            uint8_t read_buffer[8];
-
-            hal_status = HAL_FLASH_Program( FLASH_TYPEPROGRAM_DOUBLEWORD, addr, data64 );
-
-            /* Do a read after each write to be sure that data have been written before go in low power */
-            hal_flash_read_buffer( addr, read_buffer, 8 );
-
-            flash_operation_retry++;
-        } while( ( hal_status != HAL_OK ) && ( flash_operation_retry < FLASH_OPERATION_MAX_RETRY ) );
-
-        if( flash_operation_retry >= FLASH_OPERATION_MAX_RETRY )
-        {
-            /* Error occurred while writing data in Flash memory.
-            User can add here some code to deal with this error */
-            mcu_panic( );
-        }
-        else
-        {
-            flash_operation_retry = 0;
-            /* increment to next double word*/
-            addr         = addr + 8;
-            buffer_index = buffer_index + 8;
-        }
-    }
-
-    /* Lock the Flash to disable the flash control register access (recommended
-    to protect the FLASH memory against possible unwanted operation) *********/
-    HAL_FLASH_Lock( );
-#endif
 
     nvm_status = nvm3_writeData (nvm3_defaultHandle, addr, buffer, size);
     if(nvm_status == 0x00){
@@ -279,33 +128,14 @@ smtc_hal_status_t hal_flash_write_buffer( uint32_t addr, const uint8_t* buffer, 
 
 void hal_flash_read_buffer( uint32_t addr, uint8_t* buffer, uint32_t size )
 {
-  uint32_t     flash_index = 0;
+  uint32_t flash_index = 0;
   uint32_t nvm_status = SMTC_HAL_SUCCESS;
   size_t temp_size;
   uint32_t type;
   uint8_t temp_data[208];
 
-#ifdef TEMP_PORT
-  __IO uint8_t data8       = 0;
-
-  while( flash_index < size )
-    {
-      data8 = *( __IO uint32_t* ) ( addr + flash_index );
-
-      buffer[flash_index] = data8;
-
-      flash_index++;
-    }
-#endif
-//  nvm_status = nvm3_getObjectInfo(nvm3_defaultHandle, addr, &type, &temp_size);
-//  if(nvm_status == 0x00){
-//      SMTC_MODEM_HAL_TRACE_INFO( "NVM get Objectinfo Address %d, type %d, size %d\n", addr, type, temp_size );
-//  }
-//  else{
-//      SMTC_MODEM_HAL_TRACE_INFO( "NVM get Objectinfo error 0x%X, Read Address %d\n", nvm_status, addr );
-//  }
   nvm_status = nvm3_readData(nvm3_defaultHandle, addr, &temp_data, size);
-//  nvm_status = nvm3_readData(nvm3_defaultHandle, addr, &buffer, size);
+
   if(nvm_status == 0x00){
       memcpy(buffer, temp_data, size);
   }

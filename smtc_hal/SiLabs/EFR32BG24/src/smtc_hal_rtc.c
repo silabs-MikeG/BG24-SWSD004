@@ -37,10 +37,8 @@
  * --- DEPENDENCIES ------------------------------------------------------------
  */
 //#define DEBUG_HAL_RTC
-
 #include <time.h>
 #include <math.h>
-
 
 #include "smtc_hal.h"
 #include "smtc_hal_rtc_ex.h"
@@ -258,105 +256,6 @@ void hal_rtc_start_alarm( uint32_t timeout )
   SMTC_MODEM_HAL_TRACE_WARNING( "hal_rtc_start_alarm, timeout %d\n", timeout);
 #endif
   sl_sleeptimer_start_timer(&handleRtcTimer, timeout, rtcAlarmCallback, NULL, 0, 0);
-//  uint16_t        rtc_alarm_sub_seconds = 0;
-//  uint16_t        rtc_alarm_seconds     = 0;
-//  uint16_t        rtc_alarm_minutes     = 0;
-//  uint16_t        rtc_alarm_hours       = 0;
-//  uint16_t        rtc_alarm_days        = 0;
-//  RTC_TimeTypeDef time                  = hal_rtc.context.calendar_time;  // rtc_timer_context.calendar_time;
-//  RTC_DateTypeDef date                  = hal_rtc.context.calendar_date;
-//
-//  hal_rtc_stop_alarm( );
-//
-//  /* reverse counter */
-//  rtc_alarm_sub_seconds = PREDIV_S - time.SubSeconds;
-//  rtc_alarm_sub_seconds += ( timeout & PREDIV_S );
-//  /* convert timeout  to seconds */
-//  timeout >>= N_PREDIV_S;
-//
-//  /* Convert microsecs to RTC format and add to 'Now' */
-//  rtc_alarm_days = date.Date;
-//  while( timeout >= SECONDS_IN_1DAY )
-//    {
-//      timeout -= SECONDS_IN_1DAY;
-//      rtc_alarm_days++;
-//    }
-//
-//  /* Calc hours */
-//  rtc_alarm_hours = time.Hours;
-//  while( timeout >= SECONDS_IN_1HOUR )
-//    {
-//      timeout -= SECONDS_IN_1HOUR;
-//      rtc_alarm_hours++;
-//    }
-//
-//  /* Calc minutes */
-//  rtc_alarm_minutes = time.Minutes;
-//  while( timeout >= SECONDS_IN_1MINUTE )
-//    {
-//      timeout -= SECONDS_IN_1MINUTE;
-//      rtc_alarm_minutes++;
-//    }
-//
-//  /* Calc seconds */
-//  rtc_alarm_seconds = time.Seconds + timeout;
-//
-//  /***** Correct for modulo *********/
-//  while( rtc_alarm_sub_seconds >= ( PREDIV_S + 1 ) )
-//    {
-//      rtc_alarm_sub_seconds -= ( PREDIV_S + 1 );
-//      rtc_alarm_seconds++;
-//    }
-//
-//  while( rtc_alarm_seconds >= SECONDS_IN_1MINUTE )
-//    {
-//      rtc_alarm_seconds -= SECONDS_IN_1MINUTE;
-//      rtc_alarm_minutes++;
-//    }
-//
-//  while( rtc_alarm_minutes >= MINUTES_IN_1HOUR )
-//    {
-//      rtc_alarm_minutes -= MINUTES_IN_1HOUR;
-//      rtc_alarm_hours++;
-//    }
-//
-//  while( rtc_alarm_hours >= HOURS_IN_1DAY )
-//    {
-//      rtc_alarm_hours -= HOURS_IN_1DAY;
-//      rtc_alarm_days++;
-//    }
-//
-//  if( date.Year % 4 == 0 )
-//    {
-//      if( rtc_alarm_days > days_in_month_leap_year[date.Month - 1] )
-//        {
-//          rtc_alarm_days = rtc_alarm_days % days_in_month_leap_year[date.Month - 1];
-//        }
-//    }
-//  else
-//    {
-//      if( rtc_alarm_days > days_in_month[date.Month - 1] )
-//        {
-//          rtc_alarm_days = rtc_alarm_days % days_in_month[date.Month - 1];
-//        }
-//    }
-//
-//  /* Set RTC_AlarmStructure with calculated values */
-//  rtc_alarm.AlarmTime.SubSeconds     = PREDIV_S - rtc_alarm_sub_seconds;
-//  rtc_alarm.AlarmSubSecondMask       = ALARM_SUBSECOND_MASK;
-//  rtc_alarm.AlarmTime.Seconds        = rtc_alarm_seconds;
-//  rtc_alarm.AlarmTime.Minutes        = rtc_alarm_minutes;
-//  rtc_alarm.AlarmTime.Hours          = rtc_alarm_hours;
-//  rtc_alarm.AlarmDateWeekDay         = ( uint8_t ) rtc_alarm_days;
-//  rtc_alarm.AlarmTime.TimeFormat     = time.TimeFormat;
-//  rtc_alarm.AlarmDateWeekDaySel      = RTC_ALARMDATEWEEKDAYSEL_DATE;
-//  rtc_alarm.AlarmMask                = RTC_ALARMMASK_NONE;
-//  rtc_alarm.Alarm                    = RTC_ALARM_A;
-//  rtc_alarm.AlarmTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
-//  rtc_alarm.AlarmTime.StoreOperation = RTC_STOREOPERATION_RESET;
-//
-//  /* Set RTC_Alarm */
-//  HAL_RTC_SetAlarm_IT( &hal_rtc.handle, &rtc_alarm, RTC_FORMAT_BIN );
 }
 
 uint32_t hal_rtc_get_timer_value( void )
@@ -388,11 +287,7 @@ void hal_rtc_wakeup_timer_set_ms( const int32_t milliseconds )
 {
   uint32_t delay_ms_2_tick = sl_sleeptimer_ms_to_tick( milliseconds );
   sl_status_t ret = SL_STATUS_FAIL;
-//
-//  HAL_RTCEx_DeactivateWakeUpTimer( &hal_rtc.handle );
-//  /* reset irq status */
-//  wut_timer_irq_happened = false;
-//  HAL_RTCEx_SetWakeUpTimer_IT( &hal_rtc.handle, delay_ms_2_tick, RTC_WAKEUPCLOCK_RTCCLK_DIV16 );
+
 #ifdef DEBUG_HAL_RTC
   SMTC_MODEM_HAL_TRACE_WARNING( "hal_rtc_wakeup_timer_set_ms, delay %d ms\n",milliseconds);
 #endif

@@ -371,145 +371,21 @@ void hal_mcu_smps_enable( bool enable )
 
 static void hal_mcu_system_clock_config( void )
 {
-#ifdef TEMP_PORT
-    // Configure the main internal regulator output voltage
-    RCC_OscInitTypeDef       rcc_osc_init_struct = { 0 };
-    RCC_ClkInitTypeDef       rcc_clk_init_struct = { 0 };
-    RCC_PeriphCLKInitTypeDef periph_clk_init     = { 0 };
 
-    /** Configure LSE Drive Capability
-     */
-    HAL_PWR_EnableBkUpAccess( );
-    __HAL_RCC_LSEDRIVE_CONFIG( RCC_LSEDRIVE_LOW );
-    /** Configure the main internal regulator output voltage
-     */
-    __HAL_PWR_VOLTAGESCALING_CONFIG( PWR_REGULATOR_VOLTAGE_SCALE1 );
-    /** Initializes the CPU, AHB and APB busses clocks
-     */
-    rcc_osc_init_struct.OscillatorType      = RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_HSE | RCC_OSCILLATORTYPE_LSE;
-    rcc_osc_init_struct.HSEState            = RCC_HSE_ON;
-    rcc_osc_init_struct.LSEState            = RCC_LSE_ON;
-    rcc_osc_init_struct.HSIState            = RCC_HSI_ON;
-    rcc_osc_init_struct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-    rcc_osc_init_struct.PLL.PLLState        = RCC_PLL_NONE;
-    if( HAL_RCC_OscConfig( &rcc_osc_init_struct ) != HAL_OK )
-    {
-        mcu_panic( );
-    }
-    /** Configure the SYSCLKSource, HCLK, PCLK1 and PCLK2 clocks dividers
-     */
-    rcc_clk_init_struct.ClockType = RCC_CLOCKTYPE_HCLK4 | RCC_CLOCKTYPE_HCLK2 | RCC_CLOCKTYPE_HCLK |
-                                    RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
-    rcc_clk_init_struct.SYSCLKSource   = RCC_SYSCLKSOURCE_HSE;
-    rcc_clk_init_struct.AHBCLKDivider  = RCC_SYSCLK_DIV1;
-    rcc_clk_init_struct.APB1CLKDivider = RCC_HCLK_DIV1;
-    rcc_clk_init_struct.APB2CLKDivider = RCC_HCLK_DIV1;
-    rcc_clk_init_struct.AHBCLK2Divider = RCC_SYSCLK_DIV1;
-    rcc_clk_init_struct.AHBCLK4Divider = RCC_SYSCLK_DIV1;
-    if( HAL_RCC_ClockConfig( &rcc_clk_init_struct, FLASH_LATENCY_1 ) != HAL_OK )
-    {
-        mcu_panic( );
-    }
-    /** Initializes the peripherals clocks
-     */
-    periph_clk_init.PeriphClockSelection = RCC_PERIPHCLK_SMPS | RCC_PERIPHCLK_RFWAKEUP | RCC_PERIPHCLK_RTC |
-                                           RCC_PERIPHCLK_USART1 | RCC_PERIPHCLK_I2C1 | RCC_PERIPHCLK_RNG |
-                                           RCC_PERIPHCLK_ADC | RCC_PERIPHCLK_LPTIM1;
-
-    periph_clk_init.RTCClockSelection      = RCC_RTCCLKSOURCE_LSE;
-    periph_clk_init.Lptim1ClockSelection   = RCC_LPTIM1CLKSOURCE_LSE;
-    periph_clk_init.AdcClockSelection      = RCC_ADCCLKSOURCE_SYSCLK;
-    periph_clk_init.RngClockSelection      = LL_RCC_RNG_CLKSOURCE_LSE;
-    periph_clk_init.Usart1ClockSelection   = RCC_USART1CLKSOURCE_PCLK2;
-    periph_clk_init.I2c1ClockSelection     = RCC_I2C1CLKSOURCE_PCLK1;
-    periph_clk_init.RFWakeUpClockSelection = RCC_RFWKPCLKSOURCE_LSE;
-    periph_clk_init.SmpsClockSelection     = RCC_SMPSCLKSOURCE_HSE;
-    periph_clk_init.SmpsDivSelection       = RCC_SMPSCLKDIV_RANGE1;
-
-    if( HAL_RCCEx_PeriphCLKConfig( &periph_clk_init ) != HAL_OK )
-    {
-        mcu_panic( );  // Initialization Error
-    }
-
-    /* Configure the SMPS */
-    hal_mcu_smps_config( );
-
-    /* Set the 32MHz accuracy, by default load capacitance is 12pF, min is 12pF and max is 16pF.
-    Value is Between Min_Data = 0 and Max_Data = 63 ==> 4pF/63 = 0.06pF of step, 55 means load capacitance is 15.5pF */
-    LL_RCC_HSE_SetCapacitorTuning( 55 );
-
-    hal_mcu_system_clock_forward_LSE( true );
-#endif
 }
 
 static void hal_mcu_smps_config( void )
 {
-#ifdef TEMP_PORT
-    /*
-     *   See AN5246 from ST
-     *
-     *   TX level of +0 dBm (Tx Code = 25) and a digital
-     *   activity at 20 mA maximum, then we have to set the VFBSMPS at a voltage higher than
-     *   1.4 V + 15 mV (load impact) + 10 mV (trimming accuracy), that is VFBSMPS > 1.425 V, which
-     *   gives 1.450 V
-     *
-     *   SMPSVOS = (VFBSMPS � 1.5 V) / 50 mV + SMPS_coarse_engi_trim
-     *
-     *   uint8_t smps_coarse_engi_trim = (*( __IO uint32_t* ) 0x1FFF7559) & 0x0F;
-     *   uint8_t smps_fine_engi_trim = (*( __IO uint32_t* ) 0x1FFF7549) & 0x0F;
-     *   float vfbsmps = 1.45;
-     *
-     *   smpsvos = ( ( vfbsmps - 1.5 ) / 0.050 ) + smps_coarse_engi_trim;
-     */
 
-    /* Configure the SMPS */
-    LL_PWR_SMPS_SetStartupCurrent( LL_PWR_SMPS_STARTUP_CURRENT_80MA );
-    LL_PWR_SMPS_SetOutputVoltageLevel(
-        LL_PWR_SMPS_OUTPUT_VOLTAGE_1V50 );  // smpsvos should be 6 meaning LL_PWR_SMPS_OUTPUT_VOLTAGE_1V50
-    LL_PWR_SMPS_SetMode( LL_PWR_SMPS_BYPASS );
-#endif
 }
 
 static void hal_mcu_pvd_config( void )
 {
-#ifdef TEMP_PORT
-    PWR_PVDTypeDef sConfigPVD = { 0 };
-    sConfigPVD.PVDLevel       = PWR_PVDLEVEL_1;
-    sConfigPVD.Mode           = PWR_PVD_MODE_IT_RISING;
-    if( HAL_PWR_ConfigPVD( &sConfigPVD ) != HAL_OK )
-    {
-        assert_param( FAIL );
-    }
 
-    /* Enable PVD */
-    HAL_PWR_EnablePVD( );
-
-    /* Enable and set PVD Interrupt priority */
-    HAL_NVIC_SetPriority( PVD_PVM_IRQn, 0, 0 );
-    HAL_NVIC_EnableIRQ( PVD_PVM_IRQn );
-#endif
 }
 
 static void hal_mcu_gpio_init( void )
 {
-#ifdef TEMP_PORT
-    /* GPIO Ports Clock Enable */
-    __HAL_RCC_GPIOA_CLK_ENABLE( );
-    __HAL_RCC_GPIOB_CLK_ENABLE( );
-    __HAL_RCC_GPIOC_CLK_ENABLE( );
-    __HAL_RCC_GPIOE_CLK_ENABLE( );
-    __HAL_RCC_GPIOH_CLK_ENABLE( );
-#if( HAL_HW_DEBUG_PROBE == HAL_FEATURE_ON )
-    /* Enable debug in sleep/stop/standby */
-    HAL_DBGMCU_EnableDBGSleepMode( );
-    HAL_DBGMCU_EnableDBGStopMode( );
-    HAL_DBGMCU_EnableDBGStandbyMode( );
-#else
-    HAL_DBGMCU_DisableDBGSleepMode( );
-    HAL_DBGMCU_DisableDBGStopMode( );
-    HAL_DBGMCU_DisableDBGStandbyMode( );
-#endif
-#endif
     CMU_ClockEnable(cmuClock_GPIO, true);
     hal_gpio_init_out( SMTC_RADIO_NSS, 1 );
     hal_gpio_init_in( SMTC_RADIO_BUSY, HAL_GPIO_PULL_MODE_NONE, HAL_GPIO_IRQ_MODE_OFF, NULL );
@@ -519,7 +395,6 @@ static void hal_mcu_gpio_init( void )
 
     hal_gpio_init_out( SMTC_LED_RX, 0 );
     hal_gpio_init_out( SMTC_LED_TX, 0 );
-
 }
 
 /**
@@ -530,33 +405,7 @@ static void hal_mcu_gpio_init( void )
  */
 static void hal_mcu_lpm_enter_stop_mode( void )
 {
-//    CRITICAL_SECTION_BEGIN( );
-//
-//    // Deinit periph & enter Stop Mode
-//    if( partial_sleep_enable == true )
-//    {
-//        hal_mcu_lpm_mcu_deinit( );
-//    }
-//    else
-//    {
-//        smtc_board_deinit_periph( );
-//        hal_mcu_lpm_mcu_deinit( );
-//    }
-//
-//    CRITICAL_SECTION_END( );
-//
-//    /* In case of debugger probe attached, work-around of issue specified in "ES0394 - STM32WB55Cx/Rx/Vx device
-//       errata": 2.2.9 Incomplete Stop 2 mode entry after a wakeup from debug upon EXTI line 48 event "With the JTAG
-//       debugger enabled on GPIO pins and after a wakeup from debug triggered by an event on EXTI line 48 (CDBGPWRUPREQ),
-//       the device may enter in a state in which attempts to enter Stop 2 mode are not fully effective ..."
-//    */
-//    LL_EXTI_DisableIT_32_63( LL_EXTI_LINE_48 );
-//    LL_C2_EXTI_DisableIT_32_63( LL_EXTI_LINE_48 );
-//
-//    LL_C2_PWR_SetPowerMode( LL_PWR_MODE_SHUTDOWN );
-//
-//    /* Enter Stop Mode */
-//    HAL_PWREx_EnterSTOP2Mode( PWR_STOPENTRY_WFI );
+
 }
 
 /**
@@ -565,19 +414,7 @@ static void hal_mcu_lpm_enter_stop_mode( void )
  */
 static void hal_mcu_lpm_exit_stop_mode( void )
 {
-    // Disable IRQ while the MCU is not running on HSI
-//    CRITICAL_SECTION_BEGIN( );
-//
-//    /* Reinitializes the MCU */
-//    hal_mcu_lpm_mcu_reinit( );
-//
-//    if( partial_sleep_enable == false )
-//    {
-//        // Reinitializes the peripherals
-//        smtc_board_reinit_periph( );
-//    }
-//
-//    CRITICAL_SECTION_END( );
+
 }
 
 /**
@@ -586,25 +423,7 @@ static void hal_mcu_lpm_exit_stop_mode( void )
  */
 static void hal_mcu_lpm_handler( void )
 {
-
-#ifdef TEMP_PORT
-#if( HAL_LOW_POWER_MODE == HAL_FEATURE_ON )
-
-  // stop systick to avoid getting pending irq while going in stop mode
-    // Systick is automatically restart when going out of sleep
-    HAL_SuspendTick( );
-
-    __disable_irq( );
-    // If an interrupt has occurred after __disable_irq( ), it is kept pending
-    // and cortex will not enter low power anyway
-
-    hal_mcu_lpm_enter_stop_mode( );
-    hal_mcu_lpm_exit_stop_mode( );
-
-    __enable_irq( );
-    HAL_ResumeTick( );
-#endif
-#endif
+  sl_power_manager_sleep();
 }
 
 /**
@@ -645,49 +464,12 @@ void hal_mcu_lpm_mcu_reinit( void )
 
 static void hal_mcu_system_clock_re_config_after_stop( void )
 {
-//    CRITICAL_SECTION_BEGIN( );
-//
-//    /**Configure LSE Drive Capability
-//     */
-//    __HAL_RCC_LSEDRIVE_CONFIG( RCC_LSEDRIVE_LOW );
-//
-//    /* Enable HSE */
-//    __HAL_RCC_HSE_CONFIG( RCC_HSE_ON );
-//
-//    /* Wait till HSE is ready */
-//    while( __HAL_RCC_GET_FLAG( RCC_FLAG_HSERDY ) == RESET )
-//    {
-//    }
-//
-//    /* Enable HSI */
-//    __HAL_RCC_HSI_ENABLE( );
-//
-//    /* Wait till HSI is ready */
-//    while( __HAL_RCC_GET_FLAG( RCC_FLAG_HSIRDY ) == RESET )
-//    {
-//    }
-//
-//    /* Select HSE as system clock source */
-//    __HAL_RCC_SYSCLK_CONFIG( RCC_SYSCLKSOURCE_HSE );
-//
-//    /* Wait till HSE is used as system clock source */
-//    while( __HAL_RCC_GET_SYSCLK_SOURCE( ) != RCC_SYSCLKSOURCE_STATUS_HSE )
-//    {
-//    }
-//
-//    CRITICAL_SECTION_END( );
+
 }
 
 void hal_mcu_system_clock_forward_LSE( bool enable )
 {
-//    if( enable )
-//    {
-//        HAL_RCCEx_EnableLSCO( RCC_LSCOSOURCE_LSE );
-//    }
-//    else
-//    {
-//        HAL_RCCEx_DisableLSCO( );
-//    }
+
 }
 
 /**
@@ -711,7 +493,5 @@ static void vprint( const char* fmt, va_list argp )
     }
 }
 #endif
-
-
 
 /* --- EOF ------------------------------------------------------------------ */

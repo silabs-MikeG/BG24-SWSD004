@@ -52,7 +52,7 @@ extern "C" {
 
 #define HAL_PRINTF_UART_ID 1
 #define HAL_RADIO_SPI_ID 1
-#define HAL_I2C_ID 0
+#define HAL_I2C_ID 1
 
 /*
  * -----------------------------------------------------------------------------

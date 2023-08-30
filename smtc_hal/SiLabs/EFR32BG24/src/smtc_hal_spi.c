@@ -40,14 +40,11 @@
 #include <stdint.h>   // C99 types
 #include <stdbool.h>  // bool type
 
-
 #include "em_gpio.h"
 #include "smtc_hal.h"
 #include "smtc_hal_gpio.h"
 #include "modem_pinout.h"
 #include "spidrv.h"
-
-
 
 /*
  * -----------------------------------------------------------------------------
@@ -77,7 +74,6 @@
 SPIDRV_HandleData_t handleData;
 SPIDRV_Handle_t handle = &handleData;
 
-
 /*
  * -----------------------------------------------------------------------------
  * --- PRIVATE FUNCTIONS DECLARATION -------------------------------------------
@@ -100,7 +96,7 @@ void hal_spi_init( const uint32_t id, const hal_gpio_pin_names_t mosi, const hal
     // Configure CLK pin as an output low (CPOL = 0)
     GPIO_PinModeSet(hal_get_gpio_port(sclk), hal_get_gpio_pin_num(sclk), gpioModePushPull, 0);
 
-    GPIO_PinModeSet(gpioPortC, 0, gpioModePushPull, 1);
+    GPIO_PinModeSet(gpioPortC, 0, gpioModePushPull, 1);//Murata:NSS
 
      /*
       * Route USART0 RX, TX, and CLK to the specified pins.  Note that CS is
@@ -178,50 +174,7 @@ void hal_spi_init( const uint32_t id, const hal_gpio_pin_names_t mosi, const hal
             EUSART_SpiInit(EUSART1, &init);
         }
     }
-//    GPIO_PinOutClear(gpioPortC, 0);
-//    hal_spi_in_out( id, 0xAA );
-//    hal_spi_in_out( id, 0xBB );
-//    hal_spi_in_out( id, 0x31 );
-//    hal_spi_in_out( id, 0x32 );
-//    GPIO_PinOutSet(gpioPortC, 0);
 }
-//
-//void hal_spi_init( const uint32_t id, const hal_gpio_pin_names_t mosi, const hal_gpio_pin_names_t miso,
-//                   const hal_gpio_pin_names_t sclk )
-//{
-//  SPIDRV_Init_t initData = SPIDRV_MASTER_EUSART0;
-//  if(id == 0){
-//      initData.port = HAL_USART0;
-//  }
-//  else if(id == 1){
-//      initData.port = HAL_USART1;
-//  }
-//  else if(id == 2){
-//      initData.port = HAL_USART2;
-//  }
-//  initData.csControl = spidrvCsControlApplication;
-//
-//  initData.portTx = hal_get_gpio_port(mosi);
-//  initData.pinTx = hal_get_gpio_pin_num(mosi);
-//  initData.portRx = hal_get_gpio_port(miso);
-//  initData.pinRx = hal_get_gpio_pin_num(miso);
-//  initData.portClk = hal_get_gpio_port(sclk);
-//  initData.pinClk = hal_get_gpio_pin_num(sclk);
-//  initData.portCs = 0;
-//  initData.pinCs = 0;
-//
-//
-//  // Initialize an SPI driver instance.
-//  SPIDRV_Init(handle, &initData);
-//
-//
-//  hal_spi_in_out( 0, 0x00 );
-//  hal_spi_in_out( 0, 0x00 );
-//  hal_spi_in_out( 0, 0x00 );
-//  hal_spi_in_out( 0, 0x00 );
-//  hal_spi_in_out( 0, 0x00 );
-//
-//}
 
 void hal_spi_deinit( const uint32_t id )
 {

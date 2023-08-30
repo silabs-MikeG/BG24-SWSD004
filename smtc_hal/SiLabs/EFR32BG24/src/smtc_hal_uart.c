@@ -105,10 +105,7 @@ UARTDRV_Handle_t sl_uartdrv_usart_vcom_handle = &sl_uartdrv_usart_vcom_handle_da
 UARTDRV_HandleData_t sl_uartdrv_eusart_vcom_handle_data;
 UARTDRV_Handle_t sl_uartdrv_eusart_vcom_handle = &sl_uartdrv_eusart_vcom_handle_data;
 
-
-
 static UARTDRV_Handle_t sli_uartdrv_default_handle = NULL;
-
 
 /* Define RX and TX buffer queues */
 DEFINE_BUF_QUEUE(SL_UARTDRV_USART_INST_RX_BUFFER_SIZE, sl_uartdrv_usart_inst_rx_buffer);
@@ -168,8 +165,6 @@ void hal_uart_init( const uint32_t id, const hal_gpio_pin_names_t uart_tx, const
           eusart_id = 1;
       }
 
-
-
       // Route EUSART1 TX and RX to the board controller TX and RX pins
       GPIO->EUSARTROUTE[eusart_id].TXROUTE = (hal_get_gpio_port(uart_tx) << _GPIO_EUSART_TXROUTE_PORT_SHIFT)
                     | (hal_get_gpio_pin_num(uart_tx) << _GPIO_EUSART_TXROUTE_PIN_SHIFT);
@@ -188,81 +183,8 @@ void hal_uart_init( const uint32_t id, const hal_gpio_pin_names_t uart_tx, const
           // Configure and enable EUSART1 for high-frequency (EM0/1) operation
           EUSART_UartInitHf(EUSART1, &init);
       }
-
-
   }
 }
-
-//void hal_uart_init( const uint32_t id, const hal_gpio_pin_names_t uart_tx, const hal_gpio_pin_names_t uart_rx )
-//{
-//
-//    if((id == 1) || (id == 2))
-//    {
-//      /* Create uartdrv initialization structs */
-//      UARTDRV_InitEuart_t sl_uartdrv_eusart_init_vcom;
-//        if(id == 1)
-//          sl_uartdrv_eusart_init_vcom.port = HAL_USART1;
-//        else if(id == 2)
-//          sl_uartdrv_eusart_init_vcom.port = HAL_USART2;
-//
-//
-//        sl_uartdrv_eusart_init_vcom.useLowFrequencyMode = SL_UARTDRV_EUSART_INST_LF_MODE;
-//        sl_uartdrv_eusart_init_vcom.baudRate = SL_UARTDRV_USART_INST_BAUDRATE;
-//        sl_uartdrv_eusart_init_vcom.txPort = hal_get_gpio_port(uart_tx);
-//        sl_uartdrv_eusart_init_vcom.rxPort = hal_get_gpio_port(uart_rx);
-//        sl_uartdrv_eusart_init_vcom.txPin = hal_get_gpio_pin_num(uart_tx);
-//        sl_uartdrv_eusart_init_vcom.rxPin = hal_get_gpio_pin_num(uart_rx);
-//        sl_uartdrv_eusart_init_vcom.stopBits = SL_UARTDRV_USART_INST_STOP_BITS;
-//        sl_uartdrv_eusart_init_vcom.parity = SL_UARTDRV_USART_INST_PARITY;
-//        sl_uartdrv_eusart_init_vcom.oversampling = SL_UARTDRV_EUSART_INST_OVERSAMPLING;
-//        sl_uartdrv_eusart_init_vcom.mvdis = SL_UARTDRV_EUSART_INST_MVDIS;
-//        sl_uartdrv_eusart_init_vcom.fcType = SL_UARTDRV_USART_INST_FLOW_CONTROL_TYPE;
-//        sl_uartdrv_eusart_init_vcom.ctsPort = 0;
-//        sl_uartdrv_eusart_init_vcom.ctsPin = 0;
-//        sl_uartdrv_eusart_init_vcom.rtsPort = 0;
-//        sl_uartdrv_eusart_init_vcom.rtsPin = 0;
-//        sl_uartdrv_eusart_init_vcom.rxQueue = (UARTDRV_Buffer_FifoQueue_t *)&sl_uartdrv_usart_inst_rx_buffer;
-//        sl_uartdrv_eusart_init_vcom.txQueue = (UARTDRV_Buffer_FifoQueue_t *)&sl_uartdrv_usart_inst_tx_buffer;
-//
-//        if((id == 1)){
-//        sl_uartdrv_eusart_init_vcom.uartNum = 0;
-//        }
-//        else if(id == 2){
-//            sl_uartdrv_eusart_init_vcom.uartNum = 1;
-//        }
-//
-//        UARTDRV_InitEuart(sl_uartdrv_eusart_vcom_handle, &sl_uartdrv_eusart_init_vcom);
-//        sli_uartdrv_default_handle = sl_uartdrv_eusart_vcom_handle;
-//    }
-//  else if(id == 0)
-//    {
-//      /* Create uartdrv initialization structs */
-//      UARTDRV_InitUart_t sl_uartdrv_usart_init_vcom;
-//      sl_uartdrv_usart_init_vcom.port = HAL_USART0;
-//      sl_uartdrv_usart_init_vcom.baudRate = SL_UARTDRV_USART_INST_BAUDRATE;
-//      sl_uartdrv_usart_init_vcom.txPort = hal_get_gpio_port(uart_tx);;
-//      sl_uartdrv_usart_init_vcom.rxPort = hal_get_gpio_port(uart_rx);;
-//      sl_uartdrv_usart_init_vcom.txPin = hal_get_gpio_pin_num(uart_tx);;
-//      sl_uartdrv_usart_init_vcom.rxPin = hal_get_gpio_pin_num(uart_rx);;
-//      sl_uartdrv_usart_init_vcom.uartNum = 0;
-//      sl_uartdrv_usart_init_vcom.stopBits = SL_UARTDRV_USART_INST_STOP_BITS;
-//      sl_uartdrv_usart_init_vcom.parity = SL_UARTDRV_USART_INST_PARITY;
-//      sl_uartdrv_usart_init_vcom.oversampling = SL_UARTDRV_USART_INST_OVERSAMPLING;
-//      sl_uartdrv_usart_init_vcom.fcType = SL_UARTDRV_USART_INST_FLOW_CONTROL_TYPE;
-//      sl_uartdrv_usart_init_vcom.ctsPort = 0;
-//      sl_uartdrv_usart_init_vcom.rtsPort = 0;
-//      sl_uartdrv_usart_init_vcom.ctsPin = 0;
-//      sl_uartdrv_usart_init_vcom.rtsPin = 0;
-//      sl_uartdrv_usart_init_vcom.rxQueue = (UARTDRV_Buffer_FifoQueue_t *)&sl_uartdrv_usart_inst_rx_buffer;
-//      sl_uartdrv_usart_init_vcom.txQueue = (UARTDRV_Buffer_FifoQueue_t *)&sl_uartdrv_usart_inst_tx_buffer;
-//
-//      UARTDRV_InitUart(sl_uartdrv_usart_vcom_handle, &sl_uartdrv_usart_init_vcom);
-//      sli_uartdrv_default_handle = sl_uartdrv_usart_vcom_handle;
-//
-//    }
-//
-//
-//}
 
 void hal_uart_deinit( const uint32_t id )
 {

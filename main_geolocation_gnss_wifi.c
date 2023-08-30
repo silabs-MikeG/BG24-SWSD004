@@ -66,9 +66,7 @@
 
 #ifdef PORTING_TEST
 #include "smtc_modem_hal.h"
-
 #include "smtc_hal_dbg_trace.h"
-
 #include "smtc_hal_mcu.h"
 #include "smtc_hal_gpio.h"
 #include "smtc_hal_watchdog.h"
@@ -370,11 +368,23 @@ static bool porting_test_crashlog( void );
  * @}
  */
 
-/*  smtc_event_callback
+/*
  * -----------------------------------------------------------------------------
  * --- PUBLIC FUNCTIONS DEFINITION ---------------------------------------------
  */
-apps_modem_event_callback_t smtc_event_callback = {
+
+/**
+ * @brief Main application entry point.
+ */
+void geolocation_init( void )
+{
+    lr11xx_system_version_t            lr11xx_fw_version;
+    lr11xx_status_t                    status;
+#ifdef PORTING_TEST	
+    bool ret = true;
+#endif
+
+    static apps_modem_event_callback_t smtc_event_callback = {
         .adr_mobile_to_static  = NULL,
         .alarm                 = NULL,
         .almanac_update        = on_modem_almanac_update,
@@ -394,19 +404,6 @@ apps_modem_event_callback_t smtc_event_callback = {
         .middleware_1          = on_middleware_gnss_event,
         .middleware_2          = on_middleware_wifi_event,
     };
-/**
- * @brief Main application entry point.
- */
-
-
-int geolocation_init( void )
-{
-    lr11xx_system_version_t            lr11xx_fw_version;
-    lr11xx_status_t                    status;
-#ifdef PORTING_TEST	
-    bool ret = true;
-#endif
-
 
     /* Initialise the ralf_t object corresponding to the board */
     modem_radio = smtc_board_initialise_and_get_ralf( );
@@ -485,7 +482,6 @@ int geolocation_init( void )
 
     HAL_DBG_TRACE_MSG( "----------------------------------------\nEND \n\n" );
 #endif
-    //smtc_modem_hal_start_timer(3000, on_modem_timer, NULL);
 
     /* Notify user that the board is initialized */
     smtc_board_leds_blink( smtc_board_get_led_all_mask( ), 100, 2 );
@@ -513,7 +509,7 @@ int geolocation_init( void )
     HAL_DBG_TRACE_INFO( "LR11XX FW   : 0x%04X\n", lr11xx_fw_version.fw );
 
     HAL_DBG_TRACE_INFO( "Geolocation init Complete\n" );
-    return 0;
+
 }
 
 uint32_t geolocation_process( void )
@@ -755,7 +751,7 @@ static bool porting_test_radio_irq( void )
     }
     else
     {
-        PORTING_TEST_MSG_NOK( " Timeout, radio irq not received \n" );
+        PORTING_TEST_MSG_NOK( " Timeout, radio RX_TIMEOUT irq not received \n" );
         return false;
     }
     return true;
@@ -799,7 +795,6 @@ static return_code_test_t test_get_time_in_s( void )
     if( ret == false )
         return RC_PORTING_TEST_NOK;
 
-    //smtc_modem_hal_radio_irq_clear_pending();
     // Setup radio and relative irq
     smtc_modem_hal_irq_config_radio_irq( radio_irq_callback_get_time_in_s, NULL );
 
@@ -1024,8 +1019,7 @@ static bool porting_test_timer_irq( void )
         // Do nothing
     }
 
-    smtc_modem_hal_start_timer( timer_ms, timer_irq_callback,
-                                NULL );  // Warning this function takes ~3,69 ms for STM32
+    smtc_modem_hal_start_timer( timer_ms, timer_irq_callback, NULL );  // Warning this function takes ~3,69 ms for STM32
 
     // Timeout if irq not raised
     while( ( timer_irq_raised == false ) &&
@@ -1175,7 +1169,7 @@ static bool porting_test_disable_enable_irq( void )
     }
     else
     {
-        PORTING_TEST_MSG_NOK( " Timer irq not received while irq is reenabled \n" );
+        PORTING_TEST_MSG_NOK( " Timer irq not received while irq is re-enabled \n" );
         return false;
     }
 
@@ -1272,13 +1266,12 @@ static bool porting_test_random( void )
     if( ret == true )
     {
         PORTING_TEST_MSG_OK( );
+        HAL_DBG_TRACE_PRINTF( " Random draw of %u numbers between [%u;%u] range \n", nb_draw, range_min, range_max );
     }
     else
     {
-        PORTING_TEST_MSG_WARN( " Warning smtc_modem_hal_get_random_nb_in_range error margin > 5%% \n" );
+        PORTING_TEST_MSG_WARN( " Warning Get random draw error margin > 5%% \n" );
     }
-
-    HAL_DBG_TRACE_PRINTF( " Random draw of %u numbers between [%u;%u] range \n", nb_draw, range_min, range_max );
 
     return ret;
 }
@@ -1893,7 +1886,7 @@ static bool porting_test_crashlog( void )
  */
 static void radio_tx_irq_callback( void* obj )
 {
-    HAL_DBG_TRACE_MSG( "HD: radio_tx_irq_callback \n" );
+    HAL_DBG_TRACE_MSG( "radio_tx_irq_callback \n" );
     UNUSED( obj );
 
     ral_irq_t radio_irq = 0;
@@ -1922,7 +1915,7 @@ static void radio_tx_irq_callback( void* obj )
  */
 static void radio_rx_irq_callback( void* obj )
 {
-    HAL_DBG_TRACE_MSG( "HD: radio_rx_irq_callback \n" );
+    HAL_DBG_TRACE_MSG( "radio_rx_irq_callback \n" );
 
     UNUSED( obj );
 
@@ -1934,12 +1927,12 @@ static void radio_rx_irq_callback( void* obj )
     {
         PORTING_TEST_MSG_NOK( "ral_get_irq_status() function failed \n" );
     }
-    HAL_DBG_TRACE_PRINTF( " RP: IRQ source - 0x%04x\n", radio_irq );
+    HAL_DBG_TRACE_PRINTF( " IRQ source - 0x%04x\n", radio_irq );
 
     if( ( radio_irq & RAL_IRQ_RX_TIMEOUT ) == RAL_IRQ_RX_TIMEOUT )
     {
         irq_rx_timeout_raised = true;
-        HAL_DBG_TRACE_PRINTF( " HD: Receive RAL_IRQ_RX_TIMEOUT.\n");
+        HAL_DBG_TRACE_PRINTF( " Receive RAL_IRQ_RX_TIMEOUT.\n");
     }
 
     if( ral_clear_irq_status( &( modem_radio->ral ), RAL_IRQ_ALL ) != RAL_STATUS_OK )
@@ -1956,7 +1949,7 @@ static void radio_rx_irq_callback( void* obj )
  */
 static void radio_irq_callback_get_time_in_s( void* obj )
 {
-    HAL_DBG_TRACE_MSG( "HD: radio_irq_callback_get_time_in_s \n" );
+    HAL_DBG_TRACE_MSG( "radio_irq_callback_get_time_in_s \n" );
     UNUSED( obj );
     ral_irq_t radio_irq = 0;
     irq_time_s          = smtc_modem_hal_get_time_in_s( );
@@ -2016,19 +2009,28 @@ static void on_modem_reset( uint16_t reset_count )
 
 static void on_modem_network_joined( void )
 {
+    mw_return_code_t wifi_rc;
+    mw_version_t     mw_version;
+
     /* Notify user with leds */
     smtc_board_led_set( smtc_board_get_led_tx_mask( ), false );
-    smtc_board_led_set( smtc_board_get_led_rx_mask( ), true );
+    smtc_board_led_pulse( smtc_board_get_led_rx_mask( ), true, LED_PERIOD_MS );
 
-    /* Start time sync (ALC sync), necessary for GNSS scan:
-    The interval_s indicates how often the LBM will request a time sync from the DAS.
-    If no time sync downlink has been received from the DAS after the invalid_delay_s is elapsed,
-    the LBM will report SMTC_MODEM_RC_NO_TIME on smtc_modem_get_time() call. */
-    /* -- */
-    ASSERT_SMTC_MODEM_RC( smtc_modem_time_set_sync_interval_s( APP_ALC_TIMING_INTERVAL ) );     /* keep call order */
-    ASSERT_SMTC_MODEM_RC( smtc_modem_time_set_sync_invalid_delay_s( APP_ALC_TIMING_INVALID ) ); /* keep call order */
-    /* Start the service */
-    ASSERT_SMTC_MODEM_RC( smtc_modem_time_start_sync_service( stack_id, SMTC_MODEM_TIME_ALC_SYNC ) );
+    /* Set the custom ADR profile for geolocation scan & send */
+    configure_adr( );
+
+    /* Initialize Wi-Fi middleware */
+    wifi_mw_get_version( &mw_version );
+    HAL_DBG_TRACE_INFO( "Initializing Wi-Fi middleware v%d.%d.%d\n", mw_version.major, mw_version.minor,
+                        mw_version.patch );
+    wifi_mw_init( modem_radio, stack_id );
+
+    /* Start the Wi-Fi scan sequence */
+    wifi_rc = wifi_mw_scan_start( 0 );
+    if( wifi_rc != MW_RC_OK )
+    {
+        HAL_DBG_TRACE_ERROR( "Failed to start WiFi scan\n" );
+    }
 }
 
 static void on_modem_clk_synch( smtc_modem_event_time_status_t time_status )
@@ -2204,7 +2206,7 @@ static void on_middleware_gnss_event( uint8_t pending_events )
 
 static void on_middleware_wifi_event( uint8_t pending_events )
 {
-    mw_return_code_t gnss_rc;
+    mw_return_code_t wifi_rc;
 
     /* Parse events */
     if( wifi_mw_has_event( pending_events, WIFI_MW_EVENT_SCAN_DONE ) )
@@ -2237,15 +2239,15 @@ static void on_middleware_wifi_event( uint8_t pending_events )
         HAL_DBG_TRACE_INFO( "Wi-Fi middleware event - UNEXPECTED ERROR\n" );
     }
 
-    /* Program next GNSS scan */
-    if( wifi_mw_has_event( pending_events, WIFI_MW_EVENT_TERMINATED ) ||
-        wifi_mw_has_event( pending_events, WIFI_MW_EVENT_ERROR_UNKNOWN ) ||
-        wifi_mw_has_event( pending_events, WIFI_MW_EVENT_SCAN_CANCELLED ) )
+    /* Program next scan */
+    if( wifi_mw_has_event( pending_events, WIFI_MW_EVENT_ERROR_UNKNOWN ) ||
+        wifi_mw_has_event( pending_events, WIFI_MW_EVENT_TERMINATED ) )
     {
-        gnss_rc = gnss_mw_scan_start( GNSS_SCAN_MODE, GEOLOCATION_SCAN_PERIOD );
-        if( gnss_rc != MW_RC_OK )
+        /* Program the next Wi-Fi group */
+        wifi_rc = wifi_mw_scan_start( 30 );
+        if( wifi_rc != MW_RC_OK )
         {
-            HAL_DBG_TRACE_ERROR( "Failed to start GNSS scan\n" );
+            HAL_DBG_TRACE_ERROR( "Failed to start WiFi scan\n" );
         }
     }
 

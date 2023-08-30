@@ -205,8 +205,6 @@ void hal_gpio_clear_pending_irq( const hal_gpio_pin_names_t pin );
 uint8_t hal_get_gpio_pin_num(hal_gpio_pin_names_t pin);
 GPIO_Port_TypeDef hal_get_gpio_port(hal_gpio_pin_names_t pin);
 
-void hal_gpio_check_irq_flag(void);
-
 /*!
  * @brief EXTI IRQ Handler.
  */
