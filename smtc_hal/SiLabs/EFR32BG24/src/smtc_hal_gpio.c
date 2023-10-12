@@ -179,9 +179,26 @@ void hal_gpio_init_in( const hal_gpio_pin_names_t pin, const hal_gpio_pull_mode_
       .pin = pin, .port = hal_get_gpio_port(pin), .pin_num = hal_get_gpio_pin_num(pin), .mode = NULL, .pull = NULL
   };
 
+  if (pull_mode == HAL_GPIO_PULL_MODE_NONE)
+  {
+      gpio.mode = gpioModeInput;
+      gpio.pull = 0;
+  }
+  else if (pull_mode == HAL_GPIO_PULL_MODE_UP)
+  {
+      gpio.mode = gpioModeInputPull;
+      gpio.pull = 1;
+  }
+  else if (pull_mode == HAL_GPIO_PULL_MODE_DOWN)
+  {
+      gpio.mode = gpioModeInputPull;
+      gpio.pull = 0;
+  }
+#if 0
   gpio.mode = (pull_mode == HAL_GPIO_PULL_MODE_NONE) ? gpioModeInput : gpioModeInputPull;
 
   gpio.pull = (pull_mode == HAL_GPIO_PULL_MODE_DOWN) ?  0 : 1;
+#endif
   GPIO_PinModeSet(gpio.port, gpio.pin_num, gpio.mode, gpio.pull);
   if( irq != NULL )
     {
