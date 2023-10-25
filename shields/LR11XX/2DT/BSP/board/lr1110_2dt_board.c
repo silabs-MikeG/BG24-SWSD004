@@ -381,7 +381,7 @@ void smtc_board_hall_effect_enable_for_duration( uint32_t duration_ms )
     }
     else
     {
-        timer_init( &smtc_board_effect_hall.effect_hall_timer, on_effect_hall_timer_event );
+        hal_timer_init( &smtc_board_effect_hall.effect_hall_timer, on_effect_hall_timer_event );
         timer_set_context( &smtc_board_effect_hall.effect_hall_timer, NULL );
         smtc_board_effect_hall.timer_initialized = true;
     }
@@ -520,7 +520,7 @@ void smtc_board_led_pulse( uint32_t led_mask, bool turn_on, uint32_t duration_ms
 //            }
 //            else
 //            {
-//                timer_init( &smtc_board_leds[led].led_timer, on_led_timer_event );
+//                hal_timer_init( &smtc_board_leds[led].led_timer, on_led_timer_event );
 //                timer_set_context( &smtc_board_leds[led].led_timer, ( void* ) led );
 //                smtc_board_leds[led].timer_initialized = true;
 //            }
@@ -557,7 +557,7 @@ void smtc_board_start_periodic_led_pulse( uint32_t led_mask, uint32_t pulse_dura
         }
         else
         {
-            timer_init( &smtc_board_periodic_led_pulse.periodic_timer, on_periodic_timer_event );
+            hal_timer_init( &smtc_board_periodic_led_pulse.periodic_timer, on_periodic_timer_event );
             timer_set_context( &smtc_board_periodic_led_pulse.periodic_timer, NULL );
             smtc_board_periodic_led_pulse.timer_initialized = true;
         }

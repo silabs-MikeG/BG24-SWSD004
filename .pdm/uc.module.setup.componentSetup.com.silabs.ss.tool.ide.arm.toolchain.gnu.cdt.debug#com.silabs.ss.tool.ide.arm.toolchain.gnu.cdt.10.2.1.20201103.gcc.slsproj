@@ -65,6 +65,7 @@
         <folder name="inc">
           <file name="sl_atomic.h" linked="false" uri="studio:/sdk/platform/common/inc/sl_atomic.h"/>
           <file name="sl_enum.h" linked="false" uri="studio:/sdk/platform/common/inc/sl_enum.h"/>
+          <file name="sl_gsdk_version.h" linked="false" uri="studio:/sdk/platform/common/inc/sl_gsdk_version.h"/>
           <file name="sl_assert.h" linked="false" uri="studio:/sdk/platform/common/inc/sl_assert.h"/>
           <file name="sl_common.h" linked="false" uri="studio:/sdk/platform/common/inc/sl_common.h"/>
           <file name="sl_slist.h" linked="false" uri="studio:/sdk/platform/common/inc/sl_slist.h"/>
@@ -114,6 +115,7 @@
             <file name="sl_device_init_dcdc.h" linked="false" uri="studio:/sdk/platform/service/device_init/inc/sl_device_init_dcdc.h"/>
             <file name="sl_device_init_emu.h" linked="false" uri="studio:/sdk/platform/service/device_init/inc/sl_device_init_emu.h"/>
             <file name="sl_device_init_hfxo.h" linked="false" uri="studio:/sdk/platform/service/device_init/inc/sl_device_init_hfxo.h"/>
+            <file name="sl_device_init_lfrco.h" linked="false" uri="studio:/sdk/platform/service/device_init/inc/sl_device_init_lfrco.h"/>
             <file name="sl_device_init_lfxo.h" linked="false" uri="studio:/sdk/platform/service/device_init/inc/sl_device_init_lfxo.h"/>
             <file name="sl_device_init_nvic.h" linked="false" uri="studio:/sdk/platform/service/device_init/inc/sl_device_init_nvic.h"/>
           </folder>
@@ -121,6 +123,7 @@
             <file name="sl_device_init_dcdc_s2.c" linked="false" uri="studio:/sdk/platform/service/device_init/src/sl_device_init_dcdc_s2.c"/>
             <file name="sl_device_init_emu_s2.c" linked="false" uri="studio:/sdk/platform/service/device_init/src/sl_device_init_emu_s2.c"/>
             <file name="sl_device_init_hfxo_s2.c" linked="false" uri="studio:/sdk/platform/service/device_init/src/sl_device_init_hfxo_s2.c"/>
+            <file name="sl_device_init_lfrco.c" linked="false" uri="studio:/sdk/platform/service/device_init/src/sl_device_init_lfrco.c"/>
             <file name="sl_device_init_lfxo_s2.c" linked="false" uri="studio:/sdk/platform/service/device_init/src/sl_device_init_lfxo_s2.c"/>
             <file name="sl_device_init_nvic.c" linked="false" uri="studio:/sdk/platform/service/device_init/src/sl_device_init_nvic.c"/>
           </folder>
@@ -134,6 +137,14 @@
           <folder name="inc">
             <file name="sl_hfxo_manager.h" linked="false" uri="studio:/sdk/platform/service/hfxo_manager/inc/sl_hfxo_manager.h"/>
             <file name="sli_hfxo_manager.h" linked="false" uri="studio:/sdk/platform/service/hfxo_manager/inc/sli_hfxo_manager.h"/>
+          </folder>
+        </folder>
+        <folder name="mpu">
+          <folder name="src">
+            <file name="sl_mpu.c" linked="false" uri="studio:/sdk/platform/service/mpu/src/sl_mpu.c"/>
+          </folder>
+          <folder name="inc">
+            <file name="sl_mpu.h" linked="false" uri="studio:/sdk/platform/service/mpu/inc/sl_mpu.h"/>
           </folder>
         </folder>
         <folder name="power_manager">
@@ -339,8 +350,14 @@
               <file name="sli_se_opaque_key_derivation.c" linked="false" uri="studio:/sdk/platform/security/sl_component/sl_psa_driver/src/sli_se_opaque_key_derivation.c"/>
               <file name="sli_se_opaque_driver_cipher.c" linked="false" uri="studio:/sdk/platform/security/sl_component/sl_psa_driver/src/sli_se_opaque_driver_cipher.c"/>
               <file name="sli_se_opaque_driver_aead.c" linked="false" uri="studio:/sdk/platform/security/sl_component/sl_psa_driver/src/sli_se_opaque_driver_aead.c"/>
+              <file name="sl_psa_its_nvm3.c" linked="false" uri="studio:/sdk/platform/security/sl_component/sl_psa_driver/src/sl_psa_its_nvm3.c"/>
             </folder>
             <folder name="inc">
+              <folder name="psa">
+                <file name="internal_trusted_storage.h" linked="false" uri="studio:/sdk/platform/security/sl_component/sl_psa_driver/inc/psa/internal_trusted_storage.h"/>
+                <file name="sli_internal_trusted_storage.h" linked="false" uri="studio:/sdk/platform/security/sl_component/sl_psa_driver/inc/psa/sli_internal_trusted_storage.h"/>
+                <file name="error.h" linked="false" uri="studio:/sdk/platform/security/sl_component/sl_psa_driver/inc/psa/error.h"/>
+              </folder>
               <file name="sli_psa_driver_common.h" linked="false" uri="studio:/sdk/platform/security/sl_component/sl_psa_driver/inc/sli_psa_driver_common.h"/>
               <file name="sli_psa_driver_features.h" linked="false" uri="studio:/sdk/platform/security/sl_component/sl_psa_driver/inc/sli_psa_driver_features.h"/>
               <file name="sli_se_version_dependencies.h" linked="false" uri="studio:/sdk/platform/security/sl_component/sl_psa_driver/inc/sli_se_version_dependencies.h"/>
@@ -388,6 +405,14 @@
               <file name="sl_se_manager_attestation.h" linked="false" uri="studio:/sdk/platform/security/sl_component/se_manager/inc/sl_se_manager_attestation.h"/>
             </folder>
           </folder>
+          <folder name="sl_protocol_crypto">
+            <folder name="src">
+              <file name="sli_protocol_crypto_radioaes.c" linked="false" uri="studio:/sdk/platform/security/sl_component/sl_protocol_crypto/src/sli_protocol_crypto_radioaes.c"/>
+              <file name="sli_radioaes_management.c" linked="false" uri="studio:/sdk/platform/security/sl_component/sl_protocol_crypto/src/sli_radioaes_management.c"/>
+              <file name="sli_protocol_crypto.h" linked="false" uri="studio:/sdk/platform/security/sl_component/sl_protocol_crypto/src/sli_protocol_crypto.h"/>
+              <file name="sli_radioaes_management.h" linked="false" uri="studio:/sdk/platform/security/sl_component/sl_protocol_crypto/src/sli_radioaes_management.h"/>
+            </folder>
+          </folder>
         </folder>
       </folder>
       <folder name="peripheral">
@@ -396,6 +421,151 @@
         </folder>
         <folder name="inc">
           <file name="peripheral_sysrtc.h" linked="false" uri="studio:/sdk/platform/peripheral/inc/peripheral_sysrtc.h"/>
+        </folder>
+      </folder>
+      <folder name="radio">
+        <folder name="rail_lib">
+          <folder name="common">
+            <file name="rail.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/common/rail.h"/>
+            <file name="rail_mfm.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/common/rail_mfm.h"/>
+            <file name="rail_assert_error_codes.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/common/rail_assert_error_codes.h"/>
+            <file name="rail_types.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/common/rail_types.h"/>
+            <file name="rail_features.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/common/rail_features.h"/>
+          </folder>
+          <folder name="protocol">
+            <folder name="ble">
+              <file name="rail_ble.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/protocol/ble/rail_ble.h"/>
+            </folder>
+            <folder name="ieee802154">
+              <file name="rail_ieee802154.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/protocol/ieee802154/rail_ieee802154.h"/>
+            </folder>
+            <folder name="wmbus">
+              <file name="rail_wmbus.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/protocol/wmbus/rail_wmbus.h"/>
+            </folder>
+            <folder name="zwave">
+              <file name="rail_zwave.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/protocol/zwave/rail_zwave.h"/>
+            </folder>
+          </folder>
+          <folder name="chip">
+            <folder name="efr32">
+              <folder name="efr32xg2x">
+                <file name="rail_chip_specific.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/chip/efr32/efr32xg2x/rail_chip_specific.h"/>
+              </folder>
+            </folder>
+          </folder>
+          <folder name="autogen">
+            <folder name="librail_release">
+              <file name="librail_efr32xg24_gcc_release.a" linked="false" uri="studio:/sdk/platform/radio/rail_lib/autogen/librail_release/librail_efr32xg24_gcc_release.a"/>
+            </folder>
+          </folder>
+          <folder name="plugin">
+            <folder name="rail_util_built_in_phys">
+              <folder name="efr32xg24">
+                <file name="sl_rail_ble_config_38M4Hz.c" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ble_config_38M4Hz.c"/>
+                <file name="sl_rail_ieee802154_config_38M4Hz.c" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ieee802154_config_38M4Hz.c"/>
+                <file name="sl_rail_ble_config_39MHz.c" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ble_config_39MHz.c"/>
+                <file name="sl_rail_ieee802154_config_39MHz.c" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ieee802154_config_39MHz.c"/>
+                <file name="sl_rail_ble_config_40MHz.c" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ble_config_40MHz.c"/>
+                <file name="sl_rail_ieee802154_config_40MHz.c" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ieee802154_config_40MHz.c"/>
+                <file name="sl_rail_ble_config_38M4Hz.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ble_config_38M4Hz.h"/>
+                <file name="sl_rail_ieee802154_config_38M4Hz.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ieee802154_config_38M4Hz.h"/>
+                <file name="sl_rail_ble_config_39MHz.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ble_config_39MHz.h"/>
+                <file name="sl_rail_ieee802154_config_39MHz.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ieee802154_config_39MHz.h"/>
+                <file name="sl_rail_ble_config_40MHz.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ble_config_40MHz.h"/>
+                <file name="sl_rail_ieee802154_config_40MHz.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ieee802154_config_40MHz.h"/>
+              </folder>
+              <file name="sl_rail_phy_overrides.c" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/rail_util_built_in_phys/sl_rail_phy_overrides.c"/>
+            </folder>
+            <folder name="pa-conversions">
+              <folder name="efr32xg24">
+                <file name="sl_rail_util_pa_curves_10dbm.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/pa-conversions/efr32xg24/sl_rail_util_pa_curves_10dbm.h"/>
+                <file name="sl_rail_util_pa_curves_20dbm.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/pa-conversions/efr32xg24/sl_rail_util_pa_curves_20dbm.h"/>
+              </folder>
+              <file name="pa_conversions_efr32.c" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/pa-conversions/pa_conversions_efr32.c"/>
+              <file name="pa_curves_efr32.c" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/pa-conversions/pa_curves_efr32.c"/>
+              <file name="pa_conversions_efr32.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/pa-conversions/pa_conversions_efr32.h"/>
+              <file name="pa_curve_types_efr32.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/pa-conversions/pa_curve_types_efr32.h"/>
+              <file name="pa_curves_efr32.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/pa-conversions/pa_curves_efr32.h"/>
+            </folder>
+            <folder name="rail_util_power_manager_init">
+              <file name="sl_rail_util_power_manager_init.c" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/rail_util_power_manager_init/sl_rail_util_power_manager_init.c"/>
+              <file name="sl_rail_util_power_manager_init.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/rail_util_power_manager_init/sl_rail_util_power_manager_init.h"/>
+            </folder>
+            <folder name="rail_util_sequencer">
+              <file name="sl_rail_util_sequencer.c" linked="false" uri="studio:/sdk/platform/radio/rail_lib/plugin/rail_util_sequencer/sl_rail_util_sequencer.c"/>
+            </folder>
+          </folder>
+        </folder>
+      </folder>
+    </folder>
+    <folder name="app">
+      <folder name="common">
+        <folder name="util">
+          <folder name="app_assert">
+            <file name="app_assert.h" linked="false" uri="studio:/sdk/app/common/util/app_assert/app_assert.h"/>
+            <file name="sl_app_assert.h" linked="false" uri="studio:/sdk/app/common/util/app_assert/sl_app_assert.h"/>
+          </folder>
+        </folder>
+      </folder>
+      <folder name="bluetooth">
+        <folder name="common">
+          <folder name="gatt_service_device_information">
+            <file name="sl_gatt_service_device_information.h" linked="false" uri="studio:/sdk/app/bluetooth/common/gatt_service_device_information/sl_gatt_service_device_information.h"/>
+          </folder>
+        </folder>
+      </folder>
+    </folder>
+    <folder name="protocol">
+      <folder name="bluetooth">
+        <folder name="src">
+          <file name="sli_bt_advertiser_config.c" linked="false" uri="studio:/sdk/protocol/bluetooth/src/sli_bt_advertiser_config.c"/>
+          <file name="sli_bt_connection_config.c" linked="false" uri="studio:/sdk/protocol/bluetooth/src/sli_bt_connection_config.c"/>
+          <file name="sli_bt_dynamic_gattdb_config.c" linked="false" uri="studio:/sdk/protocol/bluetooth/src/sli_bt_dynamic_gattdb_config.c"/>
+          <file name="sli_bt_l2cap_config.c" linked="false" uri="studio:/sdk/protocol/bluetooth/src/sli_bt_l2cap_config.c"/>
+          <file name="sli_bt_pawr_advertiser_config.c" linked="false" uri="studio:/sdk/protocol/bluetooth/src/sli_bt_pawr_advertiser_config.c"/>
+          <file name="sli_bt_periodic_adv_config.c" linked="false" uri="studio:/sdk/protocol/bluetooth/src/sli_bt_periodic_adv_config.c"/>
+          <file name="sli_bt_periodic_advertiser_config.c" linked="false" uri="studio:/sdk/protocol/bluetooth/src/sli_bt_periodic_advertiser_config.c"/>
+          <file name="sli_bt_sync_config.c" linked="false" uri="studio:/sdk/protocol/bluetooth/src/sli_bt_sync_config.c"/>
+          <file name="sli_bt_accept_list_config.c" linked="false" uri="studio:/sdk/protocol/bluetooth/src/sli_bt_accept_list_config.c"/>
+          <file name="sl_bt_stack_init.c" linked="false" uri="studio:/sdk/protocol/bluetooth/src/sl_bt_stack_init.c"/>
+        </folder>
+        <folder name="inc">
+          <file name="sli_bt_config_defs.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sli_bt_config_defs.h"/>
+          <file name="sli_bt_advertiser_config.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sli_bt_advertiser_config.h"/>
+          <file name="sli_bt_connection_config.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sli_bt_connection_config.h"/>
+          <file name="sli_bt_dynamic_gattdb_config.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sli_bt_dynamic_gattdb_config.h"/>
+          <file name="sli_bt_l2cap_config.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sli_bt_l2cap_config.h"/>
+          <file name="sli_bt_pawr_advertiser_config.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sli_bt_pawr_advertiser_config.h"/>
+          <file name="sli_bt_periodic_adv_config.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sli_bt_periodic_adv_config.h"/>
+          <file name="sli_bt_periodic_advertiser_config.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sli_bt_periodic_advertiser_config.h"/>
+          <file name="sli_bt_sync_config.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sli_bt_sync_config.h"/>
+          <file name="sli_bt_accept_list_config.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sli_bt_accept_list_config.h"/>
+          <file name="sli_bt_gattdb_def.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sli_bt_gattdb_def.h"/>
+          <file name="sl_bt_stack_config.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_bt_stack_config.h"/>
+          <file name="sl_bt_ll_config.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_bt_ll_config.h"/>
+          <file name="sl_bgapi.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_bgapi.h"/>
+          <file name="sl_bt_api.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_bt_api.h"/>
+          <file name="sl_bt_api_compatibility.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_bt_api_compatibility.h"/>
+          <file name="sl_bt_stack_init.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_bt_stack_init.h"/>
+          <file name="sl_bt_types.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_bt_types.h"/>
+          <file name="sl_bt_version.h" linked="false" uri="studio:/sdk/protocol/bluetooth/inc/sl_bt_version.h"/>
+        </folder>
+        <folder name="bgstack">
+          <folder name="ll">
+            <folder name="inc">
+              <file name="sl_btctrl_linklayer.h" linked="false" uri="studio:/sdk/protocol/bluetooth/bgstack/ll/inc/sl_btctrl_linklayer.h"/>
+            </folder>
+          </folder>
+        </folder>
+        <folder name="api">
+          <file name="sl_bt.xapi" linked="false" uri="studio:/sdk/protocol/bluetooth/api/sl_bt.xapi"/>
+        </folder>
+        <folder name="lib">
+          <folder name="EFR32XG24">
+            <folder name="GCC">
+              <file name="libbluetooth.a" linked="false" uri="studio:/sdk/protocol/bluetooth/lib/EFR32XG24/GCC/libbluetooth.a"/>
+            </folder>
+          </folder>
         </folder>
       </folder>
     </folder>
@@ -594,9 +764,13 @@
   <file name="app.c" linked="false" uri="studio:/project/app.c"/>
   <file name="main.c" linked="false" uri="studio:/project/main.c"/>
   <file name="app.h" linked="false" uri="studio:/project/app.h"/>
+  <file name="sl_gatt_service_device_information.c" generated="true" linked="false"/>
   <includePath uri="studio:/project/"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/Device/SiliconLabs/EFR32MG24/Include"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.0/app/common/util/app_assert"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/common/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.0/protocol/bluetooth/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.0/protocol/bluetooth/bgstack/ll/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/hardware/board/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/CMSIS/Core/Include"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/hardware/driver/configuration_over_swo/inc"/>
@@ -605,6 +779,7 @@
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/emdrv/dmadrv/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/emdrv/common/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/emlib/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.0/app/bluetooth/common/gatt_service_device_information"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/emdrv/gpiointerrupt/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/service/hfxo_manager/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/security/sl_component/sl_mbedtls_support/config"/>
@@ -612,17 +787,29 @@
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/security/sl_component/sl_mbedtls_support/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/util/third_party/mbedtls/include"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/util/third_party/mbedtls/library"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/service/mpu/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/hardware/driver/mx25_flash_shutdown/inc/sl_mx25_flash_shutdown_usart"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/emdrv/nvm3/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/peripheral/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/service/power_manager/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/security/sl_component/sl_psa_driver/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/common"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/protocol/ble"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/protocol/ieee802154"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/protocol/wmbus"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/protocol/zwave"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/chip/efr32/efr32xg2x"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/pa-conversions"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/pa-conversions/efr32xg24"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_power_manager_init"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/security/sl_component/se_manager/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/security/sl_component/se_manager/src"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/util/silicon_labs/silabs_core/memory_manager"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/common/toolchain/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/service/system/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/service/sleeptimer/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/security/sl_component/sl_protocol_crypto/src"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/emdrv/spidrv/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/emdrv/uartdrv/inc"/>
   <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/service/udelay/inc"/>
@@ -636,7 +823,12 @@
   <macroDefinition name="SL_COMPONENT_CATALOG_PRESENT"/>
   <macroDefinition name="MBEDTLS_CONFIG_FILE" value="&lt;sl_mbedtls_config.h>"/>
   <macroDefinition name="MBEDTLS_PSA_CRYPTO_CONFIG_FILE" value="&lt;psa_crypto_config.h>"/>
+  <macroDefinition name="SL_RAIL_LIB_MULTIPROTOCOL_SUPPORT" value="0"/>
+  <macroDefinition name="SL_RAIL_UTIL_PA_CONFIG_HEADER" value="&lt;sl_rail_util_pa_config.h>"/>
+  <macroDefinition name="SLI_RADIOAES_REQUIRES_MASKING"/>
+  <libraryFile uri="studio:/project/gecko_sdk_4.3.0/protocol/bluetooth/lib/EFR32XG24/GCC/libbluetooth.a"/>
   <libraryFile uri="studio:/project/gecko_sdk_4.3.0/platform/emdrv/nvm3/lib/libnvm3_CM33_gcc.a"/>
+  <libraryFile uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/autogen/librail_release/librail_efr32xg24_gcc_release.a"/>
   <libraryFile name="gcc"/>
   <libraryFile name="c"/>
   <libraryFile name="m"/>

@@ -23,21 +23,35 @@ include:
 sdk: {id: gecko_sdk, version: 4.3.0}
 toolchain_settings: []
 component:
-- {id: emlib_i2c}
 - {id: power_manager}
-- {id: emlib_iadc}
-- {id: sl_system}
 - {id: nvm3_default_config}
+- {id: bluetooth_feature_gatt_server}
 - {id: nvm3_lib}
-- {id: spidrv_core}
+- {id: bluetooth_feature_sm}
+- {id: bluetooth_feature_legacy_advertiser}
+- {id: mpu}
 - {id: brd4187c}
+- {id: gatt_service_device_information}
 - {id: device_init}
 - {id: brd4002a}
+- {id: bluetooth_feature_builtin_bonding_database}
 - {id: EFR32MG24B220F1536IM48}
+- {id: bluetooth_feature_gatt}
 - {id: psa_crypto}
 - {id: uartdrv_core}
-- {id: sleeptimer}
 - {id: nvm3_default}
+- {id: emlib_i2c}
+- {id: emlib_iadc}
+- {id: bluetooth_feature_legacy_scanner}
+- {id: bt_post_build}
+- {id: sl_system}
+- {id: bluetooth_feature_connection}
+- {id: bluetooth_feature_advertiser}
+- {id: spidrv_core}
+- {id: bluetooth_feature_system}
+- {id: bluetooth_feature_scanner}
+- {id: app_assert}
+- {id: sleeptimer}
 define:
 - {name: DEBUG_EFM}
 ui_hints: {}

@@ -97,7 +97,7 @@ typedef uint32_t timer_time_t;
  * @param [in] obj Structure containing the timer object parameters
  * @param [in] callback Function callback called at the end of the timeout
  */
-void timer_init( timer_event_t* obj, void ( *callback )( void* context ) );
+void hal_timer_init( timer_event_t* obj, void ( *callback )( void* context ) );
 
 /*!
  * @brief Sets a user defined object pointer

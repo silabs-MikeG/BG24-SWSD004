@@ -135,7 +135,7 @@ static bool timer_exists( timer_event_t* obj );
  * --- PUBLIC FUNCTIONS DEFINITION ---------------------------------------------
  */
 
-void timer_init( timer_event_t* obj, void ( *callback )( void* context ) )
+void hal_timer_init( timer_event_t* obj, void ( *callback )( void* context ) )
 {
     obj->timestamp        = 0;
     obj->reload_value     = 0;

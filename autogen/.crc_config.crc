@@ -1,8 +1,11 @@
 #CRC Codes for initially generated config files -- do not modify!
+app_assert_config.h=1351236558
 dmadrv_config.h=1207334949
 emlib_core_debug_config.h=-551881347
 nvm3_default_config.h=44458093
 psa_crypto_config.h=900995367
+sl_bluetooth_advertiser_config.h=-2048821915
+sl_bluetooth_connection_config.h=1128609047
 sl_board_control_config.h=-1820830547
 sl_debug_swo_config.h=-1563780709
 sl_device_init_dcdc_config.h=1955081430

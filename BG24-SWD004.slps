@@ -10,5 +10,6 @@
     <properties key="projectCommon.toolchainId" value="com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt:10.2.1.20201103"/>
     <properties key="universalConfig.projectTypeIds" value="com.silabs.ss.framework.ide.project.core.cdtMbsProjectType"/>
     <properties key="projectCommon.importModeId" value="COPY"/>
+    <properties key="universalConfig.relativeWorkspacePath" value="..\BG24-SWD004.slcw"/>
   </descriptors>
 </model:MDescriptors>

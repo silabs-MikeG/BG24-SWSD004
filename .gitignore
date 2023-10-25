@@ -447,3 +447,77 @@ GNU ARM v10.2.1 - Debug/SWSD004.map
 GNU ARM v10.2.1 - Debug/SWSD004.out
 GNU ARM v10.2.1 - Debug/SWSD004.s37
 GNU ARM v10.2.1 - Debug/SWSD_2.map
+GNU ARM v10.2.1 - Debug/autogen/gatt_db.d
+GNU ARM v10.2.1 - Debug/autogen/gatt_db.o
+GNU ARM v10.2.1 - Debug/autogen/sl_bluetooth.d
+GNU ARM v10.2.1 - Debug/autogen/sl_bluetooth.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/pa-conversions/pa_conversions_efr32.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/pa-conversions/pa_conversions_efr32.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/pa-conversions/pa_curves_efr32.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/pa-conversions/pa_curves_efr32.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/pa-conversions/subdir.mk
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ble_config_38M4Hz.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ble_config_38M4Hz.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ble_config_39MHz.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ble_config_39MHz.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ble_config_40MHz.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ble_config_40MHz.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ieee802154_config_38M4Hz.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ieee802154_config_38M4Hz.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ieee802154_config_39MHz.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ieee802154_config_39MHz.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ieee802154_config_40MHz.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/sl_rail_ieee802154_config_40MHz.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24/subdir.mk
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_built_in_phys/sl_rail_phy_overrides.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_built_in_phys/sl_rail_phy_overrides.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_built_in_phys/subdir.mk
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_power_manager_init/sl_rail_util_power_manager_init.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_power_manager_init/sl_rail_util_power_manager_init.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_power_manager_init/subdir.mk
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_sequencer/sl_rail_util_sequencer.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_sequencer/sl_rail_util_sequencer.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_sequencer/subdir.mk
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/security/sl_component/sl_protocol_crypto/src/sli_protocol_crypto_radioaes.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/security/sl_component/sl_protocol_crypto/src/sli_protocol_crypto_radioaes.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/security/sl_component/sl_protocol_crypto/src/sli_radioaes_management.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/security/sl_component/sl_protocol_crypto/src/sli_radioaes_management.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/security/sl_component/sl_protocol_crypto/src/subdir.mk
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/security/sl_component/sl_psa_driver/src/sl_psa_its_nvm3.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/security/sl_component/sl_psa_driver/src/sl_psa_its_nvm3.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/service/device_init/src/sl_device_init_lfrco.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/service/device_init/src/sl_device_init_lfrco.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/service/mpu/src/sl_mpu.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/service/mpu/src/sl_mpu.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/platform/service/mpu/src/subdir.mk
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/sl_bt_stack_init.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/sl_bt_stack_init.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/sli_bt_accept_list_config.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/sli_bt_accept_list_config.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/sli_bt_advertiser_config.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/sli_bt_advertiser_config.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/sli_bt_connection_config.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/sli_bt_connection_config.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/sli_bt_dynamic_gattdb_config.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/sli_bt_dynamic_gattdb_config.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/sli_bt_l2cap_config.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/sli_bt_l2cap_config.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/sli_bt_pawr_advertiser_config.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/sli_bt_pawr_advertiser_config.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/sli_bt_periodic_adv_config.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/sli_bt_periodic_adv_config.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/sli_bt_periodic_advertiser_config.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/sli_bt_periodic_advertiser_config.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/sli_bt_sync_config.d
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/sli_bt_sync_config.o
+GNU ARM v10.2.1 - Debug/gecko_sdk_4.3.0/protocol/bluetooth/src/subdir.mk
+GNU ARM v10.2.1 - Debug/lora_basics_modem/lora_basics_modem/smtc_modem_core/lr1mac/src/smtc_real/src/region_eu_868.d
+GNU ARM v10.2.1 - Debug/lora_basics_modem/lora_basics_modem/smtc_modem_core/lr1mac/src/smtc_real/src/region_eu_868.o
+GNU ARM v10.2.1 - Debug/sl_gatt_service_device_information.d
+GNU ARM v10.2.1 - Debug/sl_gatt_service_device_information.o
+shields/LR11XX/2DT/BSP/ral_bsp/ral_lr11xx_bsp.c.bak
+smtc_hal/inc/smtc_hal_tmr_list.h.bak
+smtc_hal/SiLabs/EFR32BG24/src/smtc_hal_tmr_list.c.bak
+shields/LR11XX/2DT/BSP/board/lr1110_2dt_board.c.bak
+app.c.bak
+apps/common/lorawan_key_config.h
