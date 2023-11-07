@@ -521,3 +521,20 @@ smtc_hal/SiLabs/EFR32BG24/src/smtc_hal_tmr_list.c.bak
 shields/LR11XX/2DT/BSP/board/lr1110_2dt_board.c.bak
 app.c.bak
 apps/common/lorawan_key_config.h
+GNU ARM v10.2.1 - Debug/BG24-SWD004_working.s37
+GNU ARM v10.2.1 - Debug/shields/LR11XX/common/src/ral_lr11xx_bsp.d
+GNU ARM v10.2.1 - Debug/shields/LR11XX/common/src/ral_lr11xx_bsp.o
+GNU ARM v10.2.1 - Debug/shields/LR11XX/common/src/smtc_board_lr11xx.d
+GNU ARM v10.2.1 - Debug/shields/LR11XX/common/src/smtc_board_lr11xx.o
+GNU ARM v10.2.1 - Debug/shields/LR11XX/Murata/2DT/smtc_shield_2dt.d
+GNU ARM v10.2.1 - Debug/shields/LR11XX/Murata/2DT/smtc_shield_2dt.o
+GNU ARM v10.2.1 - Debug/shields/LR11XX/Murata/2DT/subdir.mk
+GNU ARM v10.2.1 - Debug/shields/LR11XX/Murata/common/src/mw_bsp.d
+GNU ARM v10.2.1 - Debug/shields/LR11XX/Murata/common/src/mw_bsp.o
+GNU ARM v10.2.1 - Debug/shields/LR11XX/Murata/common/src/smtc_shield_lr11x0_common.d
+GNU ARM v10.2.1 - Debug/shields/LR11XX/Murata/common/src/smtc_shield_lr11x0_common.o
+GNU ARM v10.2.1 - Debug/shields/LR11XX/Murata/common/src/smtc_shield_lr11xx_common.d
+GNU ARM v10.2.1 - Debug/shields/LR11XX/Murata/common/src/smtc_shield_lr11xx_common.o
+GNU ARM v10.2.1 - Debug/shields/LR11XX/Murata/common/src/smtc_shield_lr11xx_utility.d
+GNU ARM v10.2.1 - Debug/shields/LR11XX/Murata/common/src/smtc_shield_lr11xx_utility.o
+GNU ARM v10.2.1 - Debug/shields/LR11XX/Murata/common/src/subdir.mk

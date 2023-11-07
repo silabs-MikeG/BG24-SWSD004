@@ -9,8 +9,8 @@
  * The licensor of this software is Silicon Laboratories Inc. Your use of this
  * software is governed by the terms of Silicon Labs Master Software License
  * Agreement (MSLA) available at
- * www.silabs.com/about-us/legal/master-software-license-agreement. This
- * software is distributed to you in Source Code format and is governed by the
+ * www.silabs.com/about-us/legal/master-software-license-agreement. This  startup_time_in_tick
+ * software is distributed to you in Source Code format and is governed by the internal Wi-Fi scan start
  * sections of the MSLA applicable to Source Code.
  *
  ****************************************************************************
@@ -58,7 +58,7 @@ void app_process_action(void)
   uint32_t sleep_time_ms = geolocation_process();
   if(sleep_time_ms == 0 )
     sleep_time_ms = 1;
-  //sl_sleeptimer_start_timer (&handleAppTimer, sl_sleeptimer_ms_to_tick(sleep_time_ms), appTimerCallback, (void*)0,  0, 0 );
+//  sl_sleeptimer_start_timer (&handleAppTimer, sl_sleeptimer_ms_to_tick(sleep_time_ms), appTimerCallback, (void*)0,  0, 0 );
   //hal_mcu_set_sleep_for_ms(sleep_time_ms);
 }
 

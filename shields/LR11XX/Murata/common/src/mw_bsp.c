@@ -1,10 +1,10 @@
 /*!
- * @file      usr_button.h
+ * \file      mw_bsp.c
  *
- * @brief     User button driver definition.
+ * \brief     Implements the BSP (BoardSpecificPackage) functions for Middleware
  *
  * The Clear BSD License
- * Copyright Semtech Corporation 2021. All rights reserved.
+ * Copyright Semtech Corporation 2022. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted (subject to the limitations in the disclaimer
@@ -31,63 +31,64 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef USR_BUTTON_H
-#define USR_BUTTON_H
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /*
  * -----------------------------------------------------------------------------
  * --- DEPENDENCIES ------------------------------------------------------------
  */
 
-#include <stdint.h>
-#include <stdbool.h>
+#include <stdint.h>   // C99 types
+#include <stdbool.h>  // bool type
+
+#include "mw_bsp.h"
+#include "smtc_lr11xx_board.h"
+#include "ral_lr11xx_bsp.h"
+#include "smtc_shield_lr11xx_common_if.h"
+#include "smtc_shield_lr11xx_geoloc_if.h"
 
 /*
  * -----------------------------------------------------------------------------
- * --- PUBLIC MACROS -----------------------------------------------------------
- */
-
-/*
- * -----------------------------------------------------------------------------
- * --- PUBLIC CONSTANTS --------------------------------------------------------
- */
-
-/*
- * -----------------------------------------------------------------------------
- * --- PUBLIC TYPES ------------------------------------------------------------
+ * --- PRIVATE MACROS-----------------------------------------------------------
  */
 
 /*
  * -----------------------------------------------------------------------------
- * --- PUBLIC FUNCTIONS PROTOTYPES ---------------------------------------------
+ * --- PRIVATE CONSTANTS -------------------------------------------------------
  */
 
-/*!
- * @brief Init Switch
+/*
+ * -----------------------------------------------------------------------------
+ * --- PRIVATE TYPES -----------------------------------------------------------
  */
-void usr_button_init( void );
 
-/*!
- * @brief Deinit Switchs
+/*
+ * -----------------------------------------------------------------------------
+ * --- PRIVATE VARIABLES -------------------------------------------------------
  */
-void usr_button_deinit( void );
 
-/*!
- * @brief Get the accelerometer IRQ state
+/*
+ * -----------------------------------------------------------------------------
+ * --- PRIVATE FUNCTIONS DECLARATION -------------------------------------------
  */
-bool get_usr_button_irq_state( void );
 
-/*!
- * @brief Clear the accelerometer IRQ state
+/*
+ * -----------------------------------------------------------------------------
+ * --- PUBLIC FUNCTIONS DEFINITION ---------------------------------------------
  */
-void clear_usr_button_irq_state( void );
 
-#ifdef __cplusplus
+void mw_bsp_gnss_prescan_actions( void ) { smtc_shield_lr11xx_handle_pre_gnss_scan( ); }
+
+void mw_bsp_gnss_postscan_actions( void ) { smtc_shield_lr11xx_handle_post_gnss_scan( ); }
+
+void mw_bsp_wifi_prescan_actions( void ) { smtc_shield_lr11xx_handle_pre_wifi_scan( ); }
+
+void mw_bsp_wifi_postscan_actions( void ) { smtc_shield_lr11xx_handle_post_wifi_scan( ); }
+
+lr11xx_system_lfclk_cfg_t mw_bsp_get_lr11xx_lf_clock_cfg( void ) { return LR11XX_SYSTEM_LFCLK_XTAL; }
+
+void mw_bsp_get_lr11xx_reg_mode( const void* context, lr11xx_system_reg_mode_t* reg_mode )
+{
+    smtc_shield_lr11xx_get_reg_mode( );
 }
-#endif
 
-#endif  //USR_BUTTON_H
+/* --- EOF ------------------------------------------------------------------ */

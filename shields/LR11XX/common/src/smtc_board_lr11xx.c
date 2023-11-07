@@ -72,6 +72,8 @@ static lr11xx_hal_context_t radio_context = {
     .spi_id = HAL_RADIO_SPI_ID,
 };
 
+
+
 /*
  * -----------------------------------------------------------------------------
  * --- PRIVATE FUNCTIONS DECLARATION -------------------------------------------

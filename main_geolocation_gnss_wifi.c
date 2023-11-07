@@ -89,7 +89,7 @@
 /**
  * @brief LR11XX radio firmware
  */
-#define LR1110_FW_VERSION 0x0307
+#define LR1110_FW_VERSION 0x0308
 #define LR1110_FW_TYPE 0x01
 #define LR1120_FW_VERSION 0x0101
 #define LR1120_FW_TYPE 0x02
@@ -516,7 +516,7 @@ uint32_t geolocation_process( void )
 {
      /* Execute modem runtime, this function must be called again in sleep_time_ms milliseconds or sooner. */
          uint32_t sleep_time_ms = smtc_modem_run_engine( );
-//         HAL_DBG_TRACE_INFO( "geolocation process, sleep for %s ms\n", sleep_time_ms );
+//         HAL_DBG_TRACE_INFO( "sleep %d ms\n", sleep_time_ms );
          /* go in low power */
 //         hal_mcu_set_sleep_for_ms( sleep_time_ms );
          return sleep_time_ms;
@@ -2024,7 +2024,7 @@ static void on_modem_network_joined( void )
     HAL_DBG_TRACE_INFO( "Initializing Wi-Fi middleware v%d.%d.%d\n", mw_version.major, mw_version.minor,
                         mw_version.patch );
     wifi_mw_init( modem_radio, stack_id );
-
+    HAL_DBG_TRACE_INFO( "Wi-Fi Init Complete\n" );
     /* Start the Wi-Fi scan sequence */
     wifi_rc = wifi_mw_scan_start( 0 );
     if( wifi_rc != MW_RC_OK )

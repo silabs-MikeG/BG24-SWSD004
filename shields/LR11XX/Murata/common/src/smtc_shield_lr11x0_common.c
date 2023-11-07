@@ -64,8 +64,6 @@ const lr11xx_system_rfswitch_cfg_t rfswitch_cfg = {
 };
 
 
-
-
 const smtc_shield_lr11xx_tcxo_cfg_t tcxo_cfg = {
     .has_tcxo             = true,
     .supply               = LR11XX_SYSTEM_TCXO_CTRL_3_0V,

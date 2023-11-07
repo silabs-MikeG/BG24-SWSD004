@@ -314,26 +314,26 @@ void smtc_modem_hal_stop_radio_tcxo( void )
 
 uint32_t smtc_modem_hal_get_radio_tcxo_startup_delay_ms( void )
 {
-    return 35;//30;
+    return 5;//30;
 }
 
 /* ------------ Environment management ------------*/
 
 uint8_t smtc_modem_hal_get_battery_level( void )
 {
-    uint8_t battery_level;
-
-    battery_level = smtc_board_get_battery_level( );
-
-    /* returned value shall be between 1 and 254, 1 meaning 0% and 254 meaning 100% */
-    if( battery_level > 0 )
-    {
-        return ( ( battery_level * 254 ) / 100 );
-    }
-    else
-    {
-        return 1;
-    }
+//    uint8_t battery_level;
+//
+//    battery_level = smtc_board_get_battery_level( );
+//
+//    /* returned value shall be between 1 and 254, 1 meaning 0% and 254 meaning 100% */
+//    if( battery_level > 0 )
+//    {
+//        return ( ( battery_level * 254 ) / 100 );
+//    }
+//    else
+//    {
+//        return 1;
+//    }
 }
 
 int8_t smtc_modem_hal_get_temperature( void )

@@ -1,10 +1,10 @@
-/**
- * @file      leds.h
+/*!
+ * @file      smtc_shield_lr11xx_geoloc_if.h
  *
- * @brief     Leds driver definition.
+ * @brief     LR11xx-based shield geolocation interface
  *
  * The Clear BSD License
- * Copyright Semtech Corporation 2021. All rights reserved.
+ * Copyright Semtech Corporation 2022. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted (subject to the limitations in the disclaimer
@@ -31,9 +31,8 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
-#ifndef LEDS_H
-#define LEDS_H
+#ifndef SMTC_SHIELD_LR11XX_GEOLOC_IF_H
+#define SMTC_SHIELD_LR11XX_GEOLOC_IF_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -44,8 +43,12 @@ extern "C" {
  * --- DEPENDENCIES ------------------------------------------------------------
  */
 
-#include <stdint.h>
-#include <stdbool.h>
+#include "smtc_hal_trace.h"
+
+#include <stdint.h>   // C99 types
+#include <stdbool.h>  // bool type
+#include "lr11xx_radio_types.h"
+#include "lr11xx_system_types.h"
 
 /*
  * -----------------------------------------------------------------------------
@@ -56,28 +59,6 @@ extern "C" {
  * -----------------------------------------------------------------------------
  * --- PUBLIC CONSTANTS --------------------------------------------------------
  */
-
-typedef enum
-{
-    LR11XX_TRACKER_LED_TX,
-    LR11XX_TRACKER_LED_RX,
-    LR11XX_TRACKER_LED_COUNT
-} lr11xx_tracker_led_t;
-
-/*!
- * @brief LED TX MASK
- */
-#define LED_TX_MASK ( 1 << LR11XX_TRACKER_LED_TX )
-
-/*!
- * @brief LED RX MASK
- */
-#define LED_RX_MASK ( 1 << LR11XX_TRACKER_LED_RX )
-
-/*!
- * @brief LED ALL MASK
- */
-#define LED_ALL_MASK ( LED_TX_MASK | LED_RX_MASK )
 
 /*
  * -----------------------------------------------------------------------------
@@ -90,55 +71,79 @@ typedef enum
  */
 
 /*!
- * @brief Init Leds
+ * @brief Set up the shield to be ready to perform a GNSS scan
  */
-void leds_init( void );
+void smtc_shield_lr11xx_handle_pre_gnss_scan( void );
 
 /*!
- * @brief Deinit Leds
+ * @brief Set up the shield after a GNSS scan
  */
-void leds_deinit( void );
+void smtc_shield_lr11xx_handle_post_gnss_scan( void );
 
 /*!
- * @brief Select and turn on Leds
- *
- * @param [in] leds Leds MASK to turn on leds
+ * @brief Set up the shield to be ready to perform a Wi-Fi scan
  */
-void leds_on( uint8_t leds );
+void smtc_shield_lr11xx_handle_pre_wifi_scan( void );
 
 /*!
- * @brief Select and turn off Leds
- *
- * @param [in] leds Leds MASK to turn off leds
+ * @brief Set up the shield after a Wi-Fi scan
  */
-void leds_off( uint8_t leds );
+void smtc_shield_lr11xx_handle_post_wifi_scan( void );
 
-/*!
- * @brief Get the state of the Leds
- *
- * @param [in] leds Leds MASK to get the state
+/**
+ * @brief Initialize the GPIO driving the scan LED
  */
-uint32_t leds_get_state( uint8_t leds );
+void smtc_shield_lr11xx_init_led_scan( void );
 
-/*!
- * @brief Select and toggle Leds
- *
- * @param [in] leds Leds MASK to turn off leds
+/**
+ * @brief De-initialize the GPIO driving the scan LED
  */
-void leds_toggle( uint8_t leds );
+void smtc_shield_lr11xx_deinit_led_scan( void );
 
-/*!
- * @brief Select and toggle Leds
- *
- * @param [in] leds Leds MASK to turn off leds
- * @param [in] delay Blink delay
- * @param [in] nb_blink        Number of blink
- * @param [in] reset_leds     Reset leds at the beginning
+/**
+ * @brief Configure the GPIO to switch on the scan LED
  */
-void leds_blink( uint8_t leds, uint32_t delay, uint8_t nb_blink, bool reset_leds );
+void smtc_shield_lr11xx_set_led_scan( void );
+
+/**
+ * @brief Configure the GPIO to switch off the scan LED
+ */
+void smtc_shield_lr11xx_reset_led_scan( void );
+
+/**
+ * @brief Return the GPIO state the TX LED
+ */
+uint32_t smtc_shield_lr11xx_get_led_scan_state( void );
+
+/**
+ * @brief Configure the GPIO to toggle the scan LED
+ */
+void smtc_shield_lr11xx_toggle_led_scan( void );
+
+/**
+ * @brief Initialize the GPIO driving the scan LNA
+ */
+void smtc_shield_lr11xx_init_lna_scan( void );
+
+/**
+ * @brief De-initialize the GPIO driving the scan LNA
+ */
+void smtc_shield_lr11xx_deinit_lna_scan( void );
+
+/**
+ * @brief Configure the GPIO to switch on the scan LNA
+ */
+void smtc_shield_lr11xx_set_lna_scan( void );
+
+/**
+ * @brief Configure the GPIO to switch off the scan LNA
+ */
+void smtc_shield_lr11xx_reset_lna_scan( void );
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif  // LEDS_H
+#endif  // SMTC_SHIELD_LR11XX_GEOLOC_IF_H
+
+/* --- EOF ------------------------------------------------------------------ */
