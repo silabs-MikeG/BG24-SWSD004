@@ -538,3 +538,4 @@ GNU ARM v10.2.1 - Debug/shields/LR11XX/Murata/common/src/smtc_shield_lr11xx_comm
 GNU ARM v10.2.1 - Debug/shields/LR11XX/Murata/common/src/smtc_shield_lr11xx_utility.d
 GNU ARM v10.2.1 - Debug/shields/LR11XX/Murata/common/src/smtc_shield_lr11xx_utility.o
 GNU ARM v10.2.1 - Debug/shields/LR11XX/Murata/common/src/subdir.mk
+*.bak

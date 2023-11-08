@@ -347,8 +347,6 @@ int32_t smtc_modem_hal_get_signed_random_nb_in_range( const int32_t val_1, const
  */
 void smtc_modem_hal_irq_config_radio_irq( void ( *callback )( void* context ), void* context );
 
-
-void smtc_modem_hal_irq_clear_radio_irq( void );
 /*
  * @brief Clear any MCU-layer pending radio IRQ flags
  */
