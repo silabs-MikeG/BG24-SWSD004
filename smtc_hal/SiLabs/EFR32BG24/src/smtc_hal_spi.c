@@ -41,10 +41,12 @@
 #include <stdbool.h>  // bool type
 
 #include "em_gpio.h"
+#include "em_cmu.h"
 #include "smtc_hal.h"
 #include "smtc_hal_gpio.h"
 #include "modem_pinout.h"
 #include "spidrv.h"
+#include "sl_power_manager.h"
 
 /*
  * -----------------------------------------------------------------------------
@@ -60,6 +62,17 @@
  * -----------------------------------------------------------------------------
  * --- PRIVATE TYPES -----------------------------------------------------------
  */
+void spi_hal_em_callback(sl_power_manager_em_t from,
+                         sl_power_manager_em_t to);
+
+#define EM_EVENT_MASK_EUSART  ( SL_POWER_MANAGER_EVENT_TRANSITION_ENTERING_EM2 \
+    | SL_POWER_MANAGER_EVENT_TRANSITION_LEAVING_EM2 )
+
+sl_power_manager_em_transition_event_handle_t eusart_em_event_handle;
+sl_power_manager_em_transition_event_info_t eusart_em_event_info = {
+    .event_mask = EM_EVENT_MASK_EUSART,
+    .on_event = spi_hal_em_callback,
+};
 
 
 /*!
@@ -74,6 +87,10 @@
 SPIDRV_HandleData_t handleData;
 SPIDRV_Handle_t handle = &handleData;
 
+hal_gpio_pin_names_t sclk_pin;
+uint32_t saved_spi_id;
+EUSART_TypeDef *saved_spi;
+bool eusart_enabled = false;
 /*
  * -----------------------------------------------------------------------------
  * --- PRIVATE FUNCTIONS DECLARATION -------------------------------------------
@@ -83,97 +100,149 @@ SPIDRV_Handle_t handle = &handleData;
  * -----------------------------------------------------------------------------
  * --- PUBLIC FUNCTIONS DEFINITION ---------------------------------------------
  */
+void spi_hal_em_callback(sl_power_manager_em_t from,
+                         sl_power_manager_em_t to)
+{
+  switch(to){
+    case SL_POWER_MANAGER_EM0:
+
+      break;
+    case SL_POWER_MANAGER_EM1:
+      break;
+    case SL_POWER_MANAGER_EM2:
+      EUSART_Enable(saved_spi, (EUSART_CMD_RXDIS|EUSART_CMD_TXDIS));
+
+      GPIO->EUSARTROUTE[saved_spi_id].ROUTEEN = 0;
+
+
+      eusart_enabled = false;
+      break;
+
+    default:
+
+      break;
+  }
+  switch(from){
+    case SL_POWER_MANAGER_EM0:
+      break;
+    case SL_POWER_MANAGER_EM1:
+      break;
+    case SL_POWER_MANAGER_EM2:
+      break;
+
+    default:
+
+      break;
+  }
+
+}
+
+
+
 void hal_spi_init( const uint32_t id, const hal_gpio_pin_names_t mosi, const hal_gpio_pin_names_t miso,
                    const hal_gpio_pin_names_t sclk )
 {
 
   // Configure TX pin as an output
-    GPIO_PinModeSet(hal_get_gpio_port(mosi), hal_get_gpio_pin_num(mosi), gpioModePushPull, 0);
+  GPIO_PinModeSet(hal_get_gpio_port(mosi), hal_get_gpio_pin_num(mosi), gpioModePushPull, 0);
 
-    // Configure RX pin as an input
-    GPIO_PinModeSet(hal_get_gpio_port(miso), hal_get_gpio_pin_num(miso), gpioModeInput, 0);
+  // Configure RX pin as an input
+  GPIO_PinModeSet(hal_get_gpio_port(miso), hal_get_gpio_pin_num(miso), gpioModeInput, 0);
 
-    // Configure CLK pin as an output low (CPOL = 0)
-    GPIO_PinModeSet(hal_get_gpio_port(sclk), hal_get_gpio_pin_num(sclk), gpioModePushPull, 0);
+  // Configure CLK pin as an output low (CPOL = 0)
+  GPIO_PinModeSet(hal_get_gpio_port(sclk), hal_get_gpio_pin_num(sclk), gpioModePushPull, 0);
 
-    GPIO_PinModeSet(gpioPortC, 0, gpioModePushPull, 1);//Murata:NSS
+  GPIO_PinModeSet(gpioPortC, 0, gpioModePushPull, 1);//Murata:NSS
 
-     /*
-      * Route USART0 RX, TX, and CLK to the specified pins.  Note that CS is
-      * not controlled by USART0 so there is no write to the corresponding
-      * USARTROUTE register to do this.
-      */
-    if(id == 0){
-        // Default asynchronous initializer (main mode, 1 Mbps, 8-bit data)
-        USART_InitSync_TypeDef init = USART_INITSYNC_DEFAULT;
+  /*
+   * Route USART0 RX, TX, and CLK to the specified pins.  Note that CS is
+   * not controlled by USART0 so there is no write to the corresponding
+   * USARTROUTE register to do this.
+   */
+  if(id == 0){
+      // Default asynchronous initializer (main mode, 1 Mbps, 8-bit data)
+      USART_InitSync_TypeDef init = USART_INITSYNC_DEFAULT;
 
-        init.msbf = true;   // MSB first transmission for SPI compatibility
-        CMU_ClockEnable(cmuClock_USART0, true);
-        GPIO->USARTROUTE[0].TXROUTE = (hal_get_gpio_port(mosi) << _GPIO_USART_TXROUTE_PORT_SHIFT)
-             | (hal_get_gpio_pin_num(mosi) << _GPIO_USART_TXROUTE_PIN_SHIFT);
-        GPIO->USARTROUTE[0].RXROUTE = (hal_get_gpio_port(miso) << _GPIO_USART_RXROUTE_PORT_SHIFT)
-             | (hal_get_gpio_pin_num(miso) << _GPIO_USART_RXROUTE_PIN_SHIFT);
-        GPIO->USARTROUTE[0].CLKROUTE = (hal_get_gpio_port(sclk) << _GPIO_USART_CLKROUTE_PORT_SHIFT)
-             | (hal_get_gpio_pin_num(sclk) << _GPIO_USART_CLKROUTE_PIN_SHIFT);
+      init.msbf = true;   // MSB first transmission for SPI compatibility
+      CMU_ClockEnable(cmuClock_USART0, true);
+      GPIO->USARTROUTE[0].TXROUTE = (hal_get_gpio_port(mosi) << _GPIO_USART_TXROUTE_PORT_SHIFT)
+                     | (hal_get_gpio_pin_num(mosi) << _GPIO_USART_TXROUTE_PIN_SHIFT);
+      GPIO->USARTROUTE[0].RXROUTE = (hal_get_gpio_port(miso) << _GPIO_USART_RXROUTE_PORT_SHIFT)
+                     | (hal_get_gpio_pin_num(miso) << _GPIO_USART_RXROUTE_PIN_SHIFT);
+      GPIO->USARTROUTE[0].CLKROUTE = (hal_get_gpio_port(sclk) << _GPIO_USART_CLKROUTE_PORT_SHIFT)
+                     | (hal_get_gpio_pin_num(sclk) << _GPIO_USART_CLKROUTE_PIN_SHIFT);
 
-        // Enable USART interface pins
-        GPIO->USARTROUTE[0].ROUTEEN = GPIO_USART_ROUTEEN_RXPEN |    // MISO
-            GPIO_USART_ROUTEEN_TXPEN |    // MOSI
-            GPIO_USART_ROUTEEN_CLKPEN;
+      // Enable USART interface pins
+      GPIO->USARTROUTE[0].ROUTEEN = GPIO_USART_ROUTEEN_RXPEN |    // MISO
+          GPIO_USART_ROUTEEN_TXPEN |    // MOSI
+          GPIO_USART_ROUTEEN_CLKPEN;
 
-        // Configure and enable USART0
-        USART_InitSync(USART0, &init);
-    }
-    if((id == 1) || (id == 2)){
-        uint8_t eusart_id;
-        if(id == 1){
-            CMU_ClockEnable(cmuClock_EUSART0, true);
-            eusart_id = 0;
-        }
-        else{
-            CMU_ClockEnable(cmuClock_EUSART1, true);
-            eusart_id = 1;
-        }
+      // Configure and enable USART0
+      USART_InitSync(USART0, &init);
+  }
+  if((id == 1) || (id == 2)){
+      uint8_t eusart_id;
+      if(id == 1){
+          CMU_ClockEnable(cmuClock_EUSART0, true);
+          eusart_id = 0;
+      }
+      else{
+          CMU_ClockEnable(cmuClock_EUSART1, true);
+          eusart_id = 1;
+      }
 
-        // SPI advanced configuration (part of the initializer)
-        EUSART_SpiAdvancedInit_TypeDef adv = EUSART_SPI_ADVANCED_INIT_DEFAULT;
-        EUSART_SpiInit_TypeDef init = EUSART_SPI_MASTER_INIT_DEFAULT_HF;
+      // SPI advanced configuration (part of the initializer)
+      EUSART_SpiAdvancedInit_TypeDef adv = EUSART_SPI_ADVANCED_INIT_DEFAULT;
+      EUSART_SpiInit_TypeDef init = EUSART_SPI_MASTER_INIT_DEFAULT_HF;
 
-        adv.msbFirst = true;        // SPI standard MSB first
-        // Default asynchronous initializer (main/master mode and 8-bit data)
-        init.bitRate = 1000000;        // 1 MHz shift clock
-        init.advancedSettings = &adv;  // Advanced settings structure
+      adv.msbFirst = true;        // SPI standard MSB first
+      // Default asynchronous initializer (main/master mode and 8-bit data)
+      init.bitRate = 1000000;        // 1 MHz shift clock
+      init.advancedSettings = &adv;  // Advanced settings structure
 
-        /*
-         * Route EUSART1 MOSI, MISO, and SCLK to the specified pins.  CS is
-         * not controlled by EUSART1 so there is no write to the corresponding
-         * EUSARTROUTE register to do this.
-         */
-
-
-
-        GPIO->EUSARTROUTE[eusart_id].TXROUTE = (hal_get_gpio_port(mosi) << _GPIO_EUSART_TXROUTE_PORT_SHIFT)
-                       | (hal_get_gpio_pin_num(mosi) << _GPIO_EUSART_TXROUTE_PIN_SHIFT);
-        GPIO->EUSARTROUTE[eusart_id].RXROUTE = (hal_get_gpio_port(miso) << _GPIO_EUSART_RXROUTE_PORT_SHIFT)
-                       | (hal_get_gpio_pin_num(miso) << _GPIO_EUSART_RXROUTE_PIN_SHIFT);
-        GPIO->EUSARTROUTE[eusart_id].SCLKROUTE = (hal_get_gpio_port(sclk) << _GPIO_EUSART_SCLKROUTE_PORT_SHIFT)
-                       | (hal_get_gpio_pin_num(sclk) << _GPIO_EUSART_SCLKROUTE_PIN_SHIFT);
-
-        // Enable EUSART interface pins
-        GPIO->EUSARTROUTE[eusart_id].ROUTEEN = GPIO_EUSART_ROUTEEN_RXPEN |    // MISO
-            GPIO_EUSART_ROUTEEN_TXPEN |    // MOSI
-            GPIO_EUSART_ROUTEEN_SCLKPEN;
+      /*
+       * Route EUSART1 MOSI, MISO, and SCLK to the specified pins.  CS is
+       * not controlled by EUSART1 so there is no write to the corresponding
+       * EUSARTROUTE register to do this.
+       */
 
 
-        if(id == 1){
-            // Configure and enable EUSART0
-            EUSART_SpiInit(EUSART0, &init);
-        }
-        else{
-            // Configure and enable EUSART1
-            EUSART_SpiInit(EUSART1, &init);
-        }
-    }
+
+      GPIO->EUSARTROUTE[eusart_id].TXROUTE = (hal_get_gpio_port(mosi) << _GPIO_EUSART_TXROUTE_PORT_SHIFT)
+                               | (hal_get_gpio_pin_num(mosi) << _GPIO_EUSART_TXROUTE_PIN_SHIFT);
+      GPIO->EUSARTROUTE[eusart_id].RXROUTE = (hal_get_gpio_port(miso) << _GPIO_EUSART_RXROUTE_PORT_SHIFT)
+                               | (hal_get_gpio_pin_num(miso) << _GPIO_EUSART_RXROUTE_PIN_SHIFT);
+      GPIO->EUSARTROUTE[eusart_id].SCLKROUTE = (hal_get_gpio_port(sclk) << _GPIO_EUSART_SCLKROUTE_PORT_SHIFT)
+                               | (hal_get_gpio_pin_num(sclk) << _GPIO_EUSART_SCLKROUTE_PIN_SHIFT);
+
+      // Enable EUSART interface pins
+      GPIO->EUSARTROUTE[eusart_id].ROUTEEN = GPIO_EUSART_ROUTEEN_RXPEN |    // MISO
+          GPIO_EUSART_ROUTEEN_TXPEN |    // MOSI
+          GPIO_EUSART_ROUTEEN_SCLKPEN;
+
+
+      if(id == 1){
+          // Configure and enable EUSART0
+          EUSART_SpiInit(EUSART0, &init);
+      }
+      else{
+          // Configure and enable EUSART1
+          EUSART_SpiInit(EUSART1, &init);
+      }
+      if(EUSART_NOT_EM2_CAPABLE(id-1)){
+          sclk_pin = sclk;
+          // Subscribe to all event types; get notified for every power transition.
+          sl_power_manager_subscribe_em_transition_event(&eusart_em_event_handle, &eusart_em_event_info);
+          saved_spi_id = id - 1;
+          if(id == 1){
+              saved_spi = EUSART0;
+          }
+          else{
+              saved_spi = EUSART1;
+          }
+      }
+  }
+  eusart_enabled = true;
 }
 
 void hal_spi_deinit( const uint32_t id )
@@ -192,8 +261,15 @@ void hal_spi_deinit( const uint32_t id )
 uint16_t hal_spi_in_out( const uint32_t id, const uint16_t out_data )
 {
   uint8_t rxValue = 0;
-
-
+  if(!eusart_enabled)
+    {
+      CMU_ClockEnable(cmuClock_EUSART1, true);
+      GPIO->EUSARTROUTE[saved_spi_id].ROUTEEN = GPIO_EUSART_ROUTEEN_RXPEN |    // MISO
+          GPIO_EUSART_ROUTEEN_TXPEN |    // MOSI
+          GPIO_EUSART_ROUTEEN_SCLKPEN;
+      EUSART_Enable(saved_spi, eusartEnable);
+      eusart_enabled = true;
+    }
   if(id == 0){
       rxValue = USART_SpiTransfer(USART0, out_data);
   }
@@ -203,7 +279,6 @@ uint16_t hal_spi_in_out( const uint32_t id, const uint16_t out_data )
   if(id == 2){
       rxValue = EUSART_Spi_TxRx(EUSART1, out_data);
   }
-
   return rxValue;
 }
 

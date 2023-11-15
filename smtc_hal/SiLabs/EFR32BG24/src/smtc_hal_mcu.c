@@ -81,9 +81,9 @@
  */
 typedef enum low_power_mode_e
 {
-    LOW_POWER_ENABLE,
-    LOW_POWER_DISABLE,
-    LOW_POWER_DISABLE_ONCE
+  LOW_POWER_ENABLE,
+  LOW_POWER_DISABLE,
+  LOW_POWER_DISABLE_ONCE
 } low_power_mode_t;
 
 /*
@@ -94,7 +94,7 @@ typedef enum low_power_mode_e
 static volatile bool             exit_wait            = false;
 static volatile low_power_mode_t lp_current_mode      = LOW_POWER_ENABLE;
 static bool                      partial_sleep_enable = false;
-
+bool                             debug_en = false;
 /*
  * -----------------------------------------------------------------------------
  * --- PRIVATE FUNCTIONS DECLARATION -------------------------------------------
@@ -166,15 +166,26 @@ static void hal_mcu_system_clock_forward_LSE( bool enable );
 
 void hal_mcu_critical_section_begin( uint32_t* mask )
 {
-    *mask = __get_PRIMASK( );
-    __disable_irq( );
+  *mask = __get_PRIMASK( );
+  if(debug_en){
+      HAL_DBG_TRACE_INFO("disable irq\n");
+  }
+  __disable_irq( );
 }
 
 void hal_mcu_critical_section_end( uint32_t* mask ) { __set_PRIMASK( *mask ); }
 
-void hal_mcu_disable_irq( void ) { __disable_irq( ); }
+void hal_mcu_disable_irq( void ){
+  if(debug_en)
+    { HAL_DBG_TRACE_INFO("disable irq\n");
+    }
+  __disable_irq( ); }
 
-void hal_mcu_enable_irq( void ) { __enable_irq( ); }
+void hal_mcu_enable_irq( void ){
+  if(debug_en)
+    { HAL_DBG_TRACE_INFO("enable irq\n");
+    }
+  __enable_irq( ); }
 
 void hal_mcu_delay_ms( uint32_t delay_ms ) { sl_sleeptimer_delay_millisecond( delay_ms ); }
 
@@ -183,94 +194,95 @@ uint32_t hal_mcu_get_tick( void ) { return HAL_GetTick( ); }
 void hal_mcu_init( void )
 {
 
-    /* Initialize clocks */
-    hal_mcu_system_clock_config( );
+  /* Initialize clocks */
+  hal_mcu_system_clock_config( );
 
-    // Initialize watchdog
+  // Initialize watchdog
 #if( HAL_USE_WATCHDOG == HAL_FEATURE_ON )
-    hal_watchdog_init( );
+  hal_watchdog_init( );
 #endif  // HAL_USE_WATCHDOG == HAL_FEATURE_ON
 
-    /* Initialize GPIOs */
-    hal_mcu_gpio_init( );
+  /* Initialize GPIOs */
+  hal_mcu_gpio_init( );
 
-//    /* Initialize I2C */
-//    hal_i2c_init( HAL_I2C_ID, SMTC_I2C_SDA, SMTC_I2C_SCL );
+  //    /* Initialize I2C */
+  //    hal_i2c_init( HAL_I2C_ID, SMTC_I2C_SDA, SMTC_I2C_SCL );
 
-    /* Initialize UART */
+  /* Initialize UART */
 #if( HAL_USE_PRINTF_UART == HAL_FEATURE_ON )
-    hal_uart_init( HAL_PRINTF_UART_ID, UART_TX, UART_RX );
+  hal_uart_init( HAL_PRINTF_UART_ID, UART_TX, UART_RX );
+  debug_en = true;
 #endif
 
-    /* Initialize low power timer */
-    hal_lp_timer_init( );
+  /* Initialize low power timer */
+  hal_lp_timer_init( );
 
-    /* Initialize the user flash */
-    hal_flash_init( );
+  /* Initialize the user flash */
+  hal_flash_init( );
 
-    /* Init power voltage voltage detector */
-    hal_mcu_pvd_config( );
+  /* Init power voltage voltage detector */
+  hal_mcu_pvd_config( );
 
-    /* Initialize SPI */
-    hal_spi_init( HAL_RADIO_SPI_ID, SMTC_RADIO_SPI_MOSI, SMTC_RADIO_SPI_MISO, SMTC_RADIO_SPI_SCLK );
+  /* Initialize SPI */
+  hal_spi_init( HAL_RADIO_SPI_ID, SMTC_RADIO_SPI_MOSI, SMTC_RADIO_SPI_MISO, SMTC_RADIO_SPI_SCLK );
 
-    /* Initialize RTC */
-    hal_rtc_init( );
+  /* Initialize RTC */
+  hal_rtc_init( );
 
-    /* Initialize ADC */
-    hal_adc_init( );
+  /* Initialize ADC */
+  hal_adc_init( );
 }
 
 void hal_mcu_reset( void )
 {
-    __disable_irq( );
-    NVIC_SystemReset( );  // Restart system
+  __disable_irq( );
+  NVIC_SystemReset( );  // Restart system
 }
 
 void __attribute__( ( optimize( "O0" ) ) ) hal_mcu_wait_us( const int32_t microseconds )
-{
-    const uint32_t nb_nop = microseconds * 1000 / 363;
-    for( uint32_t i = 0; i < nb_nop; i++ )
+            {
+  const uint32_t nb_nop = microseconds * 1000 / 363;
+  for( uint32_t i = 0; i < nb_nop; i++ )
     {
-        __NOP( );
+      __NOP( );
     }
-}
+            }
 
 void hal_mcu_set_sleep_for_ms( const int32_t milliseconds )
 {
-    bool last_sleep_loop = false;
+  bool last_sleep_loop = false;
 
-    if( milliseconds <= 0 )
+  if( milliseconds <= 0 )
     {
-        return;
+      return;
     }
 
-    int32_t time_counter = milliseconds;
+  int32_t time_counter = milliseconds;
 
-    hal_watchdog_reload( );
+  hal_watchdog_reload( );
 
-    if( lp_current_mode == LOW_POWER_ENABLE )
+  if( lp_current_mode == LOW_POWER_ENABLE )
     {
-        do
+      do
         {
-            if( ( time_counter > ( WATCHDOG_RELOAD_PERIOD_SECONDS * 1000 ) ) )
+          if( ( time_counter > ( WATCHDOG_RELOAD_PERIOD_SECONDS * 1000 ) ) )
             {
-                time_counter -= WATCHDOG_RELOAD_PERIOD_SECONDS * 1000;
-                hal_rtc_wakeup_timer_set_ms( WATCHDOG_RELOAD_PERIOD_SECONDS * 1000 );
+              time_counter -= WATCHDOG_RELOAD_PERIOD_SECONDS * 1000;
+              hal_rtc_wakeup_timer_set_ms( WATCHDOG_RELOAD_PERIOD_SECONDS * 1000 );
             }
-            else
+          else
             {
-                hal_rtc_wakeup_timer_set_ms( time_counter );
-                // if the sleep time is less than the wdog reload period, this is the last sleep loop
-                last_sleep_loop = true;
+              hal_rtc_wakeup_timer_set_ms( time_counter );
+              // if the sleep time is less than the wdog reload period, this is the last sleep loop
+              last_sleep_loop = true;
             }
-            hal_mcu_lpm_handler( );
-            hal_watchdog_reload( );
+          hal_mcu_lpm_handler( );
+          hal_watchdog_reload( );
         } while( ( hal_rtc_has_wut_irq_happened( ) == true ) && ( last_sleep_loop == false ) );
-        if( ( last_sleep_loop == false ) || ( lp_current_mode == LOW_POWER_DISABLE_ONCE ) )
+      if( ( last_sleep_loop == false ) || ( lp_current_mode == LOW_POWER_DISABLE_ONCE ) )
         {
-            // in case sleep mode is interrupted by an other irq than the wake up timer, stop it and exit
-            hal_rtc_wakeup_timer_stop( );
+          // in case sleep mode is interrupted by an other irq than the wake up timer, stop it and exit
+          hal_rtc_wakeup_timer_stop( );
         }
     }
 }
@@ -281,23 +293,23 @@ int16_t hal_mcu_get_temperature( void ) { return hal_adc_get_temp( ); }
 
 void hal_mcu_disable_low_power_wait( void )
 {
-    exit_wait       = true;
-    lp_current_mode = LOW_POWER_DISABLE;
+  exit_wait       = true;
+  lp_current_mode = LOW_POWER_DISABLE;
 }
 
 void hal_mcu_enable_low_power_wait( void )
 {
-    exit_wait       = false;
-    lp_current_mode = LOW_POWER_ENABLE;
+  exit_wait       = false;
+  lp_current_mode = LOW_POWER_ENABLE;
 }
 
 void hal_mcu_trace_print( const char* fmt, ... )
 {
 #if HAL_DBG_TRACE == HAL_FEATURE_ON
-    va_list argp;
-    va_start( argp, fmt );
-    vprint( fmt, argp );
-    va_end( argp );
+  va_list argp;
+  va_start( argp, fmt );
+  vprint( fmt, argp );
+  va_end( argp );
 #endif
 }
 
@@ -313,13 +325,13 @@ void hal_mcu_trace_print( const char* fmt, ... )
  */
 void assert_failed( uint8_t* file, uint32_t line )
 {
-    // User can add his own implementation to report the file name and line
-    // number,
-    // ex: printf("Wrong parameters value: file %s on line %lu\r\n", file, line)
+  // User can add his own implementation to report the file name and line
+  // number,
+  // ex: printf("Wrong parameters value: file %s on line %lu\r\n", file, line)
 
-    SMTC_HAL_TRACE_PRINTF( "Wrong parameters value: file %s on line %lu\r\n", ( const char* ) file, line );
-    // Infinite loop
-    while( 1 )
+  SMTC_HAL_TRACE_PRINTF( "Wrong parameters value: file %s on line %lu\r\n", ( const char* ) file, line );
+  // Infinite loop
+  while( 1 )
     {
     }
 }
@@ -354,13 +366,13 @@ void hal_mcu_partial_sleep_enable( bool enable ) { partial_sleep_enable = enable
 
 void hal_mcu_smps_enable( bool enable )
 {
-    if( enable )
+  if( enable )
     {
-        LL_PWR_SMPS_Enable( );
+      LL_PWR_SMPS_Enable( );
     }
-    else
+  else
     {
-        LL_PWR_SMPS_Disable( );
+      LL_PWR_SMPS_Disable( );
     }
 }
 
@@ -386,15 +398,15 @@ static void hal_mcu_pvd_config( void )
 
 static void hal_mcu_gpio_init( void )
 {
-    CMU_ClockEnable(cmuClock_GPIO, true);
-    hal_gpio_init_out( SMTC_RADIO_NSS, 1 );
-    hal_gpio_init_in( SMTC_RADIO_BUSY, HAL_GPIO_PULL_MODE_DOWN, HAL_GPIO_IRQ_MODE_OFF, NULL );
-    // Here init only the pin as an exti rising and the callback will be attached later
-    hal_gpio_init_in( SMTC_RADIO_DIOX, HAL_GPIO_PULL_MODE_DOWN, HAL_GPIO_IRQ_MODE_RISING, NULL );
-    hal_gpio_init_out( SMTC_RADIO_NRST, 1 );
+  CMU_ClockEnable(cmuClock_GPIO, true);
+  hal_gpio_init_out( SMTC_RADIO_NSS, 1 );
+  hal_gpio_init_in( SMTC_RADIO_BUSY, HAL_GPIO_PULL_MODE_DOWN, HAL_GPIO_IRQ_MODE_OFF, NULL );
+  // Here init only the pin as an exti rising and the callback will be attached later
+  hal_gpio_init_in( SMTC_RADIO_DIOX, HAL_GPIO_PULL_MODE_DOWN, HAL_GPIO_IRQ_MODE_RISING, NULL );
+  hal_gpio_init_out( SMTC_RADIO_NRST, 1 );
 
-    hal_gpio_init_out( SMTC_LED_RX, 0 );
-    hal_gpio_init_out( SMTC_LED_TX, 0 );
+  hal_gpio_init_out( SMTC_LED_RX, 0 );
+  hal_gpio_init_out( SMTC_LED_TX, 0 );
 }
 
 /**
@@ -432,13 +444,13 @@ static void hal_mcu_lpm_handler( void )
  */
 static void hal_mcu_lpm_mcu_deinit( void )
 {
-    hal_spi_deinit( HAL_RADIO_SPI_ID );
+  hal_spi_deinit( HAL_RADIO_SPI_ID );
 
-    /* Disable I2C */
-    hal_i2c_deinit( HAL_I2C_ID );
-    /* Disable UART */
+  /* Disable I2C */
+  hal_i2c_deinit( HAL_I2C_ID );
+  /* Disable UART */
 #if( HAL_USE_PRINTF_UART == HAL_FEATURE_ON )
-    hal_uart_deinit( HAL_PRINTF_UART_ID );
+  hal_uart_deinit( HAL_PRINTF_UART_ID );
 #endif
 }
 
@@ -448,18 +460,18 @@ static void hal_mcu_lpm_mcu_deinit( void )
  */
 void hal_mcu_lpm_mcu_reinit( void )
 {
-    /* Reconfig needed OSC and PLL */
-    hal_mcu_system_clock_re_config_after_stop( );
+  /* Reconfig needed OSC and PLL */
+  hal_mcu_system_clock_re_config_after_stop( );
 
-    /* Initialize UART */
+  /* Initialize UART */
 #if( HAL_USE_PRINTF_UART == HAL_FEATURE_ON )
-    hal_uart_init( HAL_PRINTF_UART_ID, UART_TX, UART_RX );
+  hal_uart_init( HAL_PRINTF_UART_ID, UART_TX, UART_RX );
 #endif
-    /* Initialize I2C */
-    hal_i2c_init( HAL_I2C_ID, SMTC_I2C_SDA, SMTC_I2C_SCL );
+  /* Initialize I2C */
+  hal_i2c_init( HAL_I2C_ID, SMTC_I2C_SDA, SMTC_I2C_SCL );
 
-    /* Initialize SPI */
-    hal_spi_init( HAL_RADIO_SPI_ID, SMTC_RADIO_SPI_MOSI, SMTC_RADIO_SPI_MISO, SMTC_RADIO_SPI_SCLK );
+  /* Initialize SPI */
+  hal_spi_init( HAL_RADIO_SPI_ID, SMTC_RADIO_SPI_MOSI, SMTC_RADIO_SPI_MISO, SMTC_RADIO_SPI_SCLK );
 }
 
 static void hal_mcu_system_clock_re_config_after_stop( void )
@@ -477,20 +489,21 @@ void hal_mcu_system_clock_forward_LSE( bool enable )
  */
 void HardFault_Handler( void )
 {
-    HAL_DBG_TRACE_ERROR( "HARDFAULT_Handler\n" );
+  HAL_DBG_TRACE_ERROR( "HARDFAULT_Handler\n" );
 
-    /* reset the board */
-    hal_mcu_reset( );
+  /* reset the board */
+  hal_mcu_reset( );
 }
 
 #if( HAL_DBG_TRACE == HAL_FEATURE_ON )
 static void vprint( const char* fmt, va_list argp )
 {
-    char string[HAL_PRINT_BUFFER_SIZE];
-    if( 0 < vsprintf( string, fmt, argp ) )  // build string
+  char string[HAL_PRINT_BUFFER_SIZE];
+  if( 0 < vsprintf( string, fmt, argp ) )  // build string
     {
-        hal_uart_tx( HAL_PRINTF_UART_ID, ( uint8_t* ) string, strlen( string ) );
+      hal_uart_tx( HAL_PRINTF_UART_ID, ( uint8_t* ) string, strlen( string ) );
     }
+
 }
 #endif
 

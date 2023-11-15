@@ -192,7 +192,7 @@ void hal_rtc_init( void )
   date.min = 0;                                ///< Minute of month (0-59)
   date.hour = 0;
 
-  sl_sleeptimer_set_datetime (&date);
+//  sl_sleeptimer_set_datetime (&date);
 #ifdef DEBUG_HAL_RTC
   SMTC_MODEM_HAL_TRACE_WARNING( "rtc Init\n");
 #endif

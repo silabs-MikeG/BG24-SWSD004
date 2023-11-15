@@ -52,7 +52,7 @@
 //   <SL_SLEEPTIMER_PERIPHERAL_WTIMER=> WTIMER
 //   <SL_SLEEPTIMER_PERIPHERAL_TIMER=> TIMER
 // <i> Selection of the Timer Peripheral Used by the Sleeptimer
-#define SL_SLEEPTIMER_PERIPHERAL  SL_SLEEPTIMER_PERIPHERAL_DEFAULT
+#define SL_SLEEPTIMER_PERIPHERAL  SL_SLEEPTIMER_PERIPHERAL_SYSRTC
 
 // <o SL_SLEEPTIMER_TIMER_INSTANCE> TIMER/WTIMER Instance Used by Sleeptimer (not applicable for other peripherals)
 // <i> Make sure TIMER instance size is 32bits. Check datasheet for 32bits TIMERs.
@@ -62,7 +62,7 @@
 // <q SL_SLEEPTIMER_WALLCLOCK_CONFIG> Enable wallclock functionality
 // <i> Enable or disable wallclock functionalities (get_time, get_date, etc).
 // <i> Default: 0
-#define SL_SLEEPTIMER_WALLCLOCK_CONFIG  1
+#define SL_SLEEPTIMER_WALLCLOCK_CONFIG  0
 
 // <o SL_SLEEPTIMER_FREQ_DIVIDER> Timer frequency divider (not applicable for WTIMER/TIMER)
 // <i> WTIMER/TIMER peripherals are always prescaled to 1024.

@@ -436,9 +436,7 @@ static const char* name_context_type[] = { "MODEM", "LR1MAC", "DEVNONCE", "SECUR
  {
    /* Execute modem runtime, this function must be called again in sleep_time_ms milliseconds or sooner. */
    uint32_t sleep_time_ms = smtc_modem_run_engine( );
-   //         HAL_DBG_TRACE_INFO( "sleep %d ms\n", sleep_time_ms );
-   /* go in low power */
-   //         hal_mcu_set_sleep_for_ms( sleep_time_ms );
+//   HAL_DBG_TRACE_INFO( "Sleep %d\n", sleep_time_ms );
    return sleep_time_ms;
  }
 

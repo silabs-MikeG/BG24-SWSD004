@@ -22,9 +22,20 @@
 #include "sl_sleeptimer.h"
 #include "main_geolocation_gnss_wifi.h"
 #include "smtc_hal_gpio.h"
+#include "smtc_hal_dbg_trace.h"
 
+
+#define EM_GPIO1_PORT   gpioPortA
+#define EM_GPIO2_PORT   gpioPortA
+
+#define EM_GPIO1_PIN    6
+#define EM_GPIO2_PIN    7
 
 sl_sleeptimer_timer_handle_t handleAppTimer;
+bool appLoraModemSleep;
+bool appLoraTimerWake;
+
+
 
 // The advertising set handle allocated from Bluetooth stack.
 static uint8_t advertising_set_handle = 0xff;
@@ -34,10 +45,20 @@ void appTimerCallback(sl_sleeptimer_timer_handle_t *handle, void *data);
 
 void appTimerCallback(sl_sleeptimer_timer_handle_t *handle, void *data)
 {
-
-    sl_sleeptimer_stop_timer (&handleAppTimer);
-
+  (void)handle;
+  (void)data;
+  appLoraTimerWake = true;
 }
+
+
+/***************************************************************************//**
+ * Function called by power manager to ensure that system is ok to sleep.
+ ******************************************************************************/
+bool app_is_ok_to_sleep()
+{
+  return appLoraModemSleep;
+}
+
 
 
 /***************************************************************************//**
@@ -46,6 +67,8 @@ void appTimerCallback(sl_sleeptimer_timer_handle_t *handle, void *data)
 void app_init(void)
 {
   geolocation_init();
+  appLoraModemSleep = true;
+  appLoraTimerWake = false;
 }
 
 /***************************************************************************//**
@@ -53,13 +76,33 @@ void app_init(void)
  ******************************************************************************/
 void app_process_action(void)
 {
+  sl_status_t error;
 
-  //hal_gpio_check_irq_flag();
+  if(appLoraTimerWake)
+    {
+      appLoraTimerWake = false;
+      //      HAL_DBG_TRACE_ERROR("LoRa Timer expired\n");
+    }
   uint32_t sleep_time_ms = geolocation_process();
-  if(sleep_time_ms == 0 )
-    sleep_time_ms = 1;
-//  sl_sleeptimer_start_timer (&handleAppTimer, sl_sleeptimer_ms_to_tick(sleep_time_ms), appTimerCallback, (void*)0,  0, 0 );
-  //hal_mcu_set_sleep_for_ms(sleep_time_ms);
+  if(sleep_time_ms <= 20 ){
+      //      sleep_time_ms = 10;
+      if(appLoraModemSleep){
+          appLoraModemSleep = false;
+          sl_power_manager_add_em_requirement(SL_POWER_MANAGER_EM1);
+      }
+  }
+  else{
+      if(!appLoraModemSleep){
+          appLoraModemSleep = true;
+          sl_power_manager_remove_em_requirement(SL_POWER_MANAGER_EM1);
+      }
+  }
+  error = sl_sleeptimer_restart_timer (&handleAppTimer, sl_sleeptimer_ms_to_tick(sleep_time_ms), appTimerCallback, (void*)0,  0, 0 );
+
+  if(error != SL_STATUS_OK)
+    {
+      HAL_DBG_TRACE_ERROR("Sleep Timer err %X\r\n", error);
+    }
 }
 
 
@@ -83,18 +126,18 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       sc = sl_bt_advertiser_create_set(&advertising_set_handle);
       app_assert_status(sc);
 
-      // Generate data for advertising
+      //Generate data for advertising
       sc = sl_bt_legacy_advertiser_generate_data(advertising_set_handle,
                                                  sl_bt_advertiser_general_discoverable);
       app_assert_status(sc);
 
       // Set advertising interval to 100ms.
       sc = sl_bt_advertiser_set_timing(
-        advertising_set_handle,
-        160, // min. adv. interval (milliseconds * 1.6)
-        160, // max. adv. interval (milliseconds * 1.6)
-        0,   // adv. duration
-        0);  // max. num. adv. events
+          advertising_set_handle,
+          160, // min. adv. interval (milliseconds * 1.6)
+          160, // max. adv. interval (milliseconds * 1.6)
+          0,   // adv. duration
+          0);  // max. num. adv. events
       app_assert_status(sc);
       // Start advertising and enable connections.
       sc = sl_bt_legacy_advertiser_start(advertising_set_handle,
@@ -102,14 +145,14 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       app_assert_status(sc);
       break;
 
-    // -------------------------------
-    // This event indicates that a new connection was opened.
+      // -------------------------------
+      // This event indicates that a new connection was opened.
     case sl_bt_evt_connection_opened_id:
       printf("Connection Opened\r\n");
       break;
 
-    // -------------------------------
-    // This event indicates that a connection was closed.
+      // -------------------------------
+      // This event indicates that a connection was closed.
     case sl_bt_evt_connection_closed_id:
       // Generate data for advertising
       sc = sl_bt_legacy_advertiser_generate_data(advertising_set_handle,
@@ -123,12 +166,12 @@ void sl_bt_on_event(sl_bt_msg_t *evt)
       printf("Connection Closed\r\n");
       break;
 
-    ///////////////////////////////////////////////////////////////////////////
-    // Add additional event handlers here as your application requires!      //
-    ///////////////////////////////////////////////////////////////////////////
+      ///////////////////////////////////////////////////////////////////////////
+      // Add additional event handlers here as your application requires!      //
+      ///////////////////////////////////////////////////////////////////////////
 
-    // -------------------------------
-    // Default event handler.
+      // -------------------------------
+      // Default event handler.
     default:
       break;
   }
