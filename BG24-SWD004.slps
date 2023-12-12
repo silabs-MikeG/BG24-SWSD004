@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <model:MDescriptors xmlns:model="http://www.silabs.com/ss/Studio.ecore">
   <descriptors name="BG24-SWD004">
-    <properties key="projectCommon.sdkId" value="com.silabs.sdk.stack.super:4.3.0._362621876"/>
+    <properties key="projectCommon.sdkId" value="com.silabs.sdk.stack.super:4.3.2._841786880"/>
     <properties key="universalConfig.generationDirectory" value=""/>
     <properties key="universalConfig.toolchainCompatibility" value="iar gcc"/>
     <properties key="projectCommon.boardIds" value="brd4002a:0.0.0.A03 brd4187c:0.0.0.A01"/>

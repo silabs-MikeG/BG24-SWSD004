@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="uc.module.setup.componentSetup.com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt.debug#com.silabs.ss.tool.ide.arm.toolchain.gnu.cdt:10.2.1.20201103.gcc" propertyScope="project">
-  <folder name="gecko_sdk_4.3.0">
+  <folder name="gecko_sdk_4.3.2">
     <folder name="platform">
       <folder name="Device">
         <folder name="SiliconLabs">
@@ -445,6 +445,9 @@
             <folder name="zwave">
               <file name="rail_zwave.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/protocol/zwave/rail_zwave.h"/>
             </folder>
+            <folder name="sidewalk">
+              <file name="rail_sidewalk.h" linked="false" uri="studio:/sdk/platform/radio/rail_lib/protocol/sidewalk/rail_sidewalk.h"/>
+            </folder>
           </folder>
           <folder name="chip">
             <folder name="efr32">
@@ -766,53 +769,54 @@
   <file name="app.h" linked="false" uri="studio:/project/app.h"/>
   <file name="sl_gatt_service_device_information.c" generated="true" linked="false"/>
   <includePath uri="studio:/project/"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/Device/SiliconLabs/EFR32MG24/Include"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/app/common/util/app_assert"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/common/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/protocol/bluetooth/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/protocol/bluetooth/bgstack/ll/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/hardware/board/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/CMSIS/Core/Include"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/hardware/driver/configuration_over_swo/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/driver/debug/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/service/device_init/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/emdrv/dmadrv/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/emdrv/common/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/emlib/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/app/bluetooth/common/gatt_service_device_information"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/emdrv/gpiointerrupt/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/service/hfxo_manager/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/security/sl_component/sl_mbedtls_support/config"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/security/sl_component/sl_mbedtls_support/config/preset"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/security/sl_component/sl_mbedtls_support/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/util/third_party/mbedtls/include"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/util/third_party/mbedtls/library"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/service/mpu/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/hardware/driver/mx25_flash_shutdown/inc/sl_mx25_flash_shutdown_usart"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/emdrv/nvm3/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/peripheral/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/service/power_manager/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/security/sl_component/sl_psa_driver/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/common"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/protocol/ble"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/protocol/ieee802154"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/protocol/wmbus"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/protocol/zwave"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/chip/efr32/efr32xg2x"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/pa-conversions"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/pa-conversions/efr32xg24"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/plugin/rail_util_power_manager_init"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/security/sl_component/se_manager/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/security/sl_component/se_manager/src"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/util/silicon_labs/silabs_core/memory_manager"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/common/toolchain/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/service/system/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/service/sleeptimer/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/security/sl_component/sl_protocol_crypto/src"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/emdrv/spidrv/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/emdrv/uartdrv/inc"/>
-  <includePath uri="studio:/project/gecko_sdk_4.3.0/platform/service/udelay/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/Device/SiliconLabs/EFR32MG24/Include"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/app/common/util/app_assert"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/common/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/protocol/bluetooth/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/protocol/bluetooth/bgstack/ll/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/hardware/board/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/CMSIS/Core/Include"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/hardware/driver/configuration_over_swo/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/driver/debug/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/service/device_init/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/emdrv/dmadrv/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/emdrv/common/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/emlib/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/app/bluetooth/common/gatt_service_device_information"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/emdrv/gpiointerrupt/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/service/hfxo_manager/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/security/sl_component/sl_mbedtls_support/config"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/security/sl_component/sl_mbedtls_support/config/preset"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/security/sl_component/sl_mbedtls_support/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/util/third_party/mbedtls/include"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/util/third_party/mbedtls/library"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/service/mpu/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/hardware/driver/mx25_flash_shutdown/inc/sl_mx25_flash_shutdown_usart"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/emdrv/nvm3/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/peripheral/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/service/power_manager/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/security/sl_component/sl_psa_driver/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/radio/rail_lib/common"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/radio/rail_lib/protocol/ble"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/radio/rail_lib/protocol/ieee802154"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/radio/rail_lib/protocol/wmbus"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/radio/rail_lib/protocol/zwave"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/radio/rail_lib/chip/efr32/efr32xg2x"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/radio/rail_lib/protocol/sidewalk"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/radio/rail_lib/plugin/rail_util_built_in_phys/efr32xg24"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/radio/rail_lib/plugin/pa-conversions"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/radio/rail_lib/plugin/pa-conversions/efr32xg24"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/radio/rail_lib/plugin/rail_util_power_manager_init"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/security/sl_component/se_manager/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/security/sl_component/se_manager/src"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/util/silicon_labs/silabs_core/memory_manager"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/common/toolchain/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/service/system/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/service/sleeptimer/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/security/sl_component/sl_protocol_crypto/src"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/emdrv/spidrv/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/emdrv/uartdrv/inc"/>
+  <includePath uri="studio:/project/gecko_sdk_4.3.2/platform/service/udelay/inc"/>
   <macroDefinition name="DEBUG_EFM"/>
   <macroDefinition name="EFR32MG24B220F1536IM48"/>
   <macroDefinition name="HARDWARE_BOARD_DEFAULT_RF_BAND_2400"/>
@@ -826,9 +830,9 @@
   <macroDefinition name="SL_RAIL_LIB_MULTIPROTOCOL_SUPPORT" value="0"/>
   <macroDefinition name="SL_RAIL_UTIL_PA_CONFIG_HEADER" value="&lt;sl_rail_util_pa_config.h>"/>
   <macroDefinition name="SLI_RADIOAES_REQUIRES_MASKING"/>
-  <libraryFile uri="studio:/project/gecko_sdk_4.3.0/protocol/bluetooth/lib/EFR32XG24/GCC/libbluetooth.a"/>
-  <libraryFile uri="studio:/project/gecko_sdk_4.3.0/platform/emdrv/nvm3/lib/libnvm3_CM33_gcc.a"/>
-  <libraryFile uri="studio:/project/gecko_sdk_4.3.0/platform/radio/rail_lib/autogen/librail_release/librail_efr32xg24_gcc_release.a"/>
+  <libraryFile uri="studio:/project/gecko_sdk_4.3.2/protocol/bluetooth/lib/EFR32XG24/GCC/libbluetooth.a"/>
+  <libraryFile uri="studio:/project/gecko_sdk_4.3.2/platform/emdrv/nvm3/lib/libnvm3_CM33_gcc.a"/>
+  <libraryFile uri="studio:/project/gecko_sdk_4.3.2/platform/radio/rail_lib/autogen/librail_release/librail_efr32xg24_gcc_release.a"/>
   <libraryFile name="gcc"/>
   <libraryFile name="c"/>
   <libraryFile name="m"/>
